@@ -3,25 +3,25 @@ pragma solidity 0.7.5;
 pragma experimental ABIEncoderV2;
 
 import {IERC20} from '../interfaces/IERC20.sol';
-import {IStakedAave} from '../interfaces/IStakedAave.sol';
+import {IStakedPSYS} from '../interfaces/IStakedPSYS.sol';
 import {ITransferHook} from '../interfaces/ITransferHook.sol';
 import {ERC20WithSnapshot} from '../lib/ERC20WithSnapshot.sol';
 import {SafeERC20} from '../lib/SafeERC20.sol';
 import {VersionedInitializable} from '../utils/VersionedInitializable.sol';
 import {DistributionTypes} from '../lib/DistributionTypes.sol';
-import {AaveDistributionManager} from './AaveDistributionManager.sol';
+import {PegasysDistributionManager} from './PegasysDistributionManager.sol';
 import {SafeMath} from '../lib/SafeMath.sol';
 
 /**
  * @title StakedToken
- * @notice Contract to stake Aave token, tokenize the position and get rewards, inheriting from a distribution manager contract
- * @author Aave
+ * @notice Contract to stake PSYS token, tokenize the position and get rewards, inheriting from a distribution manager contract
+ * @author
  **/
 contract StakedToken is
-  IStakedAave,
+  IStakedPSYS,
   ERC20WithSnapshot,
   VersionedInitializable,
-  AaveDistributionManager
+  PegasysDistributionManager
 {
   using SafeMath for uint256;
   using SafeERC20 for IERC20;
@@ -63,7 +63,7 @@ contract StakedToken is
   )
     public
     ERC20WithSnapshot(name, symbol, decimals)
-    AaveDistributionManager(emissionManager, distributionDuration)
+    PegasysDistributionManager(emissionManager, distributionDuration)
   {
     STAKED_TOKEN = stakedToken;
     REWARD_TOKEN = rewardToken;
@@ -76,7 +76,7 @@ contract StakedToken is
    * @dev Called by the proxy contract
    **/
   function initialize(
-    ITransferHook aaveGovernance,
+    ITransferHook pegasysGovernance,
     string calldata name,
     string calldata symbol,
     uint8 decimals
@@ -84,15 +84,19 @@ contract StakedToken is
     _setName(name);
     _setSymbol(symbol);
     _setDecimals(decimals);
-    _setAaveGovernance(aaveGovernance);
+    _setPegasysGovernance(pegasysGovernance);
   }
 
   function stake(address onBehalfOf, uint256 amount) external override {
     require(amount != 0, 'INVALID_ZERO_AMOUNT');
     uint256 balanceOfUser = balanceOf(onBehalfOf);
 
-    uint256 accruedRewards =
-      _updateUserAssetInternal(onBehalfOf, address(this), balanceOfUser, totalSupply());
+    uint256 accruedRewards = _updateUserAssetInternal(
+      onBehalfOf,
+      address(this),
+      balanceOfUser,
+      totalSupply()
+    );
     if (accruedRewards != 0) {
       emit RewardsAccrued(onBehalfOf, accruedRewards);
       stakerRewardsToClaim[onBehalfOf] = stakerRewardsToClaim[onBehalfOf].add(accruedRewards);
@@ -158,8 +162,11 @@ contract StakedToken is
    * @param amount Amount to stake
    **/
   function claimRewards(address to, uint256 amount) external override {
-    uint256 newTotalRewards =
-      _updateCurrentUnclaimedRewards(msg.sender, balanceOf(msg.sender), false);
+    uint256 newTotalRewards = _updateCurrentUnclaimedRewards(
+      msg.sender,
+      balanceOf(msg.sender),
+      false
+    );
     uint256 amountToClaim = (amount == type(uint256).max) ? newTotalRewards : amount;
 
     stakerRewardsToClaim[msg.sender] = newTotalRewards.sub(amountToClaim, 'INVALID_AMOUNT');
@@ -175,11 +182,7 @@ contract StakedToken is
    * @param to Address to transfer to
    * @param amount Amount to transfer
    **/
-  function _transfer(
-    address from,
-    address to,
-    uint256 amount
-  ) internal override {
+  function _transfer(address from, address to, uint256 amount) internal override {
     uint256 balanceOfFrom = balanceOf(from);
     // Sender
     _updateCurrentUnclaimedRewards(from, balanceOfFrom, true);
@@ -217,8 +220,12 @@ contract StakedToken is
     uint256 userBalance,
     bool updateStorage
   ) internal returns (uint256) {
-    uint256 accruedRewards =
-      _updateUserAssetInternal(user, address(this), userBalance, totalSupply());
+    uint256 accruedRewards = _updateUserAssetInternal(
+      user,
+      address(this),
+      userBalance,
+      totalSupply()
+    );
     uint256 unclaimedRewards = stakerRewardsToClaim[user].add(accruedRewards);
 
     if (accruedRewards != 0) {
@@ -256,24 +263,23 @@ contract StakedToken is
       return 0;
     }
 
-    uint256 minimalValidCooldownTimestamp =
-      block.timestamp.sub(COOLDOWN_SECONDS).sub(UNSTAKE_WINDOW);
+    uint256 minimalValidCooldownTimestamp = block.timestamp.sub(COOLDOWN_SECONDS).sub(
+      UNSTAKE_WINDOW
+    );
 
     if (minimalValidCooldownTimestamp > toCooldownTimestamp) {
       toCooldownTimestamp = 0;
     } else {
-      uint256 fromCooldownTimestamp =
-        (minimalValidCooldownTimestamp > fromCooldownTimestamp)
-          ? block.timestamp
-          : fromCooldownTimestamp;
+      uint256 fromCooldownTimestamp = (minimalValidCooldownTimestamp > fromCooldownTimestamp)
+        ? block.timestamp
+        : fromCooldownTimestamp;
 
       if (fromCooldownTimestamp < toCooldownTimestamp) {
         return toCooldownTimestamp;
       } else {
         toCooldownTimestamp = (
           amountToReceive.mul(fromCooldownTimestamp).add(toBalance.mul(toCooldownTimestamp))
-        )
-          .div(amountToReceive.add(toBalance));
+        ).div(amountToReceive.add(toBalance));
       }
     }
     return toCooldownTimestamp;
@@ -285,8 +291,8 @@ contract StakedToken is
    * @return The rewards
    */
   function getTotalRewardsBalance(address staker) external view returns (uint256) {
-    DistributionTypes.UserStakeInput[] memory userStakeInputs =
-      new DistributionTypes.UserStakeInput[](1);
+    DistributionTypes.UserStakeInput[]
+      memory userStakeInputs = new DistributionTypes.UserStakeInput[](1);
     userStakeInputs[0] = DistributionTypes.UserStakeInput({
       underlyingAsset: address(this),
       stakedByUser: balanceOf(staker),

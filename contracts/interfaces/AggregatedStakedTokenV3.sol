@@ -70,14 +70,14 @@ interface AggregatedStakedTokenV3 {
 
   function UNSTAKE_WINDOW() external view returns (uint256);
 
-  function _aaveGovernance() external view returns (address);
+  function _pegasysGovernance() external view returns (address);
 
   function _nonces(address) external view returns (uint256);
 
-  function _votingSnapshots(address, uint256)
-    external
-    view
-    returns (uint128 blockNumber, uint128 value);
+  function _votingSnapshots(
+    address,
+    uint256
+  ) external view returns (uint128 blockNumber, uint128 value);
 
   function _votingSnapshotsCounts(address) external view returns (uint256);
 
@@ -97,11 +97,7 @@ interface AggregatedStakedTokenV3 {
 
   function claimRewards(address to, uint256 amount) external;
 
-  function claimRewardsAndRedeem(
-    address to,
-    uint256 claimAmount,
-    uint256 redeemAmount
-  ) external;
+  function claimRewardsAndRedeem(address to, uint256 claimAmount, uint256 redeemAmount) external;
 
   function claimRewardsAndRedeemOnBehalf(
     address from,
@@ -155,10 +151,10 @@ interface AggregatedStakedTokenV3 {
 
   function getCooldownSeconds() external view returns (uint256);
 
-  function getDelegateeByType(address delegator, uint8 delegationType)
-    external
-    view
-    returns (address);
+  function getDelegateeByType(
+    address delegator,
+    uint8 delegationType
+  ) external view returns (address);
 
   function getExchangeRate() external view returns (uint216);
 
@@ -208,11 +204,7 @@ interface AggregatedStakedTokenV3 {
 
   function redeem(address to, uint256 amount) external;
 
-  function redeemOnBehalf(
-    address from,
-    address to,
-    uint256 amount
-  ) external;
+  function redeemOnBehalf(address from, address to, uint256 amount) external;
 
   function returnFunds(uint256 amount) external;
 
@@ -240,9 +232,5 @@ interface AggregatedStakedTokenV3 {
 
   function transfer(address to, uint256 amount) external returns (bool);
 
-  function transferFrom(
-    address from,
-    address to,
-    uint256 amount
-  ) external returns (bool);
+  function transferFrom(address from, address to, uint256 amount) external returns (bool);
 }

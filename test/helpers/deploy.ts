@@ -3,25 +3,25 @@ import {
   PSM_STAKER_PREMIUM,
   COOLDOWN_SECONDS,
   UNSTAKE_WINDOW,
-  STAKED_AAVE_NAME,
-  STAKED_AAVE_SYMBOL,
-  STAKED_AAVE_DECIMALS,
+  STAKED_PSYS_NAME,
+  STAKED_PSYS_SYMBOL,
+  STAKED_PSYS_DECIMALS,
   MAX_UINT_AMOUNT,
 } from '../../helpers/constants';
 import {
   deployInitializableAdminUpgradeabilityProxy,
-  deployAaveIncentivesController,
-  deployStakedAave,
+  deployPegasysIncentivesController,
+  deployStakedPSYS,
   deployMockTransferHook,
-  deployStakedAaveV2,
+  deployStakedPSYSV2,
 } from '../../helpers/contracts-accessors';
 import { insertContractAddressInDb } from '../../helpers/contracts-helpers';
 import { waitForTx } from '../../helpers/misc-utils';
 import { eContractid } from '../../helpers/types';
 import { MintableErc20 } from '../../types/MintableErc20';
 
-export const testDeployAaveStakeV1 = async (
-  aaveToken: MintableErc20,
+export const testDeploypsysStakeV1 = async (
+  psysToken: MintableErc20,
   deployer: Signer,
   vaultOfRewards: Signer,
   restWallets: Signer[]
@@ -29,24 +29,24 @@ export const testDeployAaveStakeV1 = async (
   const proxyAdmin = await restWallets[0].getAddress();
   const emissionManager = await deployer.getAddress();
 
-  const stakedToken = aaveToken.address;
-  const rewardsToken = aaveToken.address;
+  const stakedToken = psysToken.address;
+  const rewardsToken = psysToken.address;
 
   const vaultOfRewardsAddress = await vaultOfRewards.getAddress();
 
-  const aaveIncentivesControllerProxy = await deployInitializableAdminUpgradeabilityProxy();
-  const stakedAaveProxy = await deployInitializableAdminUpgradeabilityProxy();
+  const pegasysIncentivesControllerProxy = await deployInitializableAdminUpgradeabilityProxy();
+  const StakedPSYSProxy = await deployInitializableAdminUpgradeabilityProxy();
 
-  const aaveIncentivesControllerImplementation = await deployAaveIncentivesController([
-    aaveToken.address,
+  const pegasysIncentivesControllerImplementation = await deployPegasysIncentivesController([
+    psysToken.address,
     vaultOfRewardsAddress,
-    stakedAaveProxy.address,
+    StakedPSYSProxy.address,
     PSM_STAKER_PREMIUM,
     emissionManager,
     (1000 * 60 * 60).toString(),
   ]);
 
-  const stakedAaveImpl = await deployStakedAave([
+  const StakedPSYSImpl = await deployStakedPSYS([
     stakedToken,
     rewardsToken,
     COOLDOWN_SECONDS,
@@ -58,65 +58,64 @@ export const testDeployAaveStakeV1 = async (
 
   const mockTransferHook = await deployMockTransferHook();
 
-  const stakedAaveEncodedInitialize = stakedAaveImpl.interface.encodeFunctionData('initialize', [
+  const StakedPSYSEncodedInitialize = StakedPSYSImpl.interface.encodeFunctionData('initialize', [
     mockTransferHook.address,
-    STAKED_AAVE_NAME,
-    STAKED_AAVE_SYMBOL,
-    STAKED_AAVE_DECIMALS,
+    STAKED_PSYS_NAME,
+    STAKED_PSYS_SYMBOL,
+    STAKED_PSYS_DECIMALS,
   ]);
-  await stakedAaveProxy['initialize(address,address,bytes)'](
-    stakedAaveImpl.address,
+  await StakedPSYSProxy['initialize(address,address,bytes)'](
+    StakedPSYSImpl.address,
     proxyAdmin,
-    stakedAaveEncodedInitialize
+    StakedPSYSEncodedInitialize
   );
   await waitForTx(
-    await aaveToken.connect(vaultOfRewards).approve(stakedAaveProxy.address, MAX_UINT_AMOUNT)
+    await psysToken.connect(vaultOfRewards).approve(StakedPSYSProxy.address, MAX_UINT_AMOUNT)
   );
-  await insertContractAddressInDb(eContractid.StakedAave, stakedAaveProxy.address);
+  await insertContractAddressInDb(eContractid.StakedPSYS, StakedPSYSProxy.address);
 
-  const peiEncodedInitialize = aaveIncentivesControllerImplementation.interface.encodeFunctionData(
-    'initialize'
-  );
-  await aaveIncentivesControllerProxy['initialize(address,address,bytes)'](
-    aaveIncentivesControllerImplementation.address,
+  const peiEncodedInitialize =
+    pegasysIncentivesControllerImplementation.interface.encodeFunctionData('initialize');
+  await pegasysIncentivesControllerProxy['initialize(address,address,bytes)'](
+    pegasysIncentivesControllerImplementation.address,
     proxyAdmin,
     peiEncodedInitialize
   );
   await waitForTx(
-    await aaveToken
+    await psysToken
       .connect(vaultOfRewards)
-      .approve(aaveIncentivesControllerProxy.address, MAX_UINT_AMOUNT)
+      .approve(pegasysIncentivesControllerProxy.address, MAX_UINT_AMOUNT)
   );
   await insertContractAddressInDb(
-    eContractid.AaveIncentivesController,
-    aaveIncentivesControllerProxy.address
+    eContractid.PegasysIncentivesController,
+    pegasysIncentivesControllerProxy.address
   );
 
   return {
-    aaveIncentivesControllerProxy,
-    stakedAaveProxy,
+    pegasysIncentivesControllerProxy,
+    StakedPSYSProxy,
   };
 };
 
-export const testDeployAaveStakeV2 = async (
-  aaveToken: MintableErc20,
+export const testDeploypsysStakeV2 = async (
+  psysToken: MintableErc20,
   deployer: Signer,
   vaultOfRewards: Signer,
   restWallets: Signer[]
 ) => {
-  const stakedToken = aaveToken.address;
-  const rewardsToken = aaveToken.address;
+  const stakedToken = psysToken.address;
+  const rewardsToken = psysToken.address;
   const emissionManager = await deployer.getAddress();
   const vaultOfRewardsAddress = await vaultOfRewards.getAddress();
 
-  const { stakedAaveProxy } = await testDeployAaveStakeV1(
-    aaveToken,
+  const { StakedPSYSProxy } = await testDeploypsysStakeV1(
+    psysToken,
     deployer,
     vaultOfRewards,
     restWallets
   );
 
-  const stakedAaveImpl = await deployStakedAaveV2([
+  const StakedPSYSImpl = await deployStakedPSYSV2([
     stakedToken,
     rewardsToken,
     COOLDOWN_SECONDS,
@@ -126,15 +125,16 @@ export const testDeployAaveStakeV2 = async (
     (1000 * 60 * 60).toString(),
   ]);
 
-  const stakedAaveEncodedInitialize = stakedAaveImpl.interface.encodeFunctionData('initialize');
+  const StakedPSYSEncodedInitialize = StakedPSYSImpl.interface.encodeFunctionData('initialize');
 
-  await stakedAaveProxy
-    .connect(restWallets[0])
-    .upgradeToAndCall(stakedAaveImpl.address, stakedAaveEncodedInitialize);
+  await StakedPSYSProxy.connect(restWallets[0]).upgradeToAndCall(
+    StakedPSYSImpl.address,
+    StakedPSYSEncodedInitialize
+  );
 
-  await insertContractAddressInDb(eContractid.StakedAaveV2, stakedAaveProxy.address);
+  await insertContractAddressInDb(eContractid.StakedPSYSV2, StakedPSYSProxy.address);
 
   return {
-    stakedAaveProxy,
+    StakedPSYSProxy,
   };
 };

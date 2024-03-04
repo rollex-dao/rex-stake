@@ -35,10 +35,10 @@ interface IStakedTokenDataProvider {
   function ETH_USD_PRICE_FEED() external returns (address);
 
   /**
-   * @notice Return the address of the AAVE price feed, ETH denominated
-   * @return The address of the AAVE price feed, ETH denominated, expressed with 18 decimals
+   * @notice Return the address of the PSYS price feed, ETH denominated
+   * @return The address of the PSYS price feed, ETH denominated, expressed with 18 decimals
    */
-  function AAVE_PRICE_FEED() external returns (address);
+  function PSYS_PRICE_FEED() external returns (address);
 
   /**
    * @notice Return the address of the BPT price feed, ETH denominated
@@ -47,16 +47,16 @@ interface IStakedTokenDataProvider {
   function BPT_PRICE_FEED() external returns (address);
 
   /**
-   * @notice Return the address of the AAVE token
-   * @return The address of the AAVE token
+   * @notice Return the address of the PSYS token
+   * @return The address of the PSYS token
    */
-  function AAVE() external returns (address);
+  function PSYS() external returns (address);
 
   /**
-   * @notice Return the address of the Staked AAVE token
-   * @return The address of the StkAAVE token
+   * @notice Return the address of the Staked PSYS token
+   * @return The address of the StkPSYS token
    */
-  function STAKED_AAVE() external returns (address);
+  function STAKED_PSYS() external returns (address);
 
   /**
    * @notice Return the address of the BPT token
@@ -72,7 +72,7 @@ interface IStakedTokenDataProvider {
 
   /**
    * @notice Returns data of all Staked Tokens
-   * @return stkAaveData An object with StkAave data
+   * @return stkPSYSData An object with stkPSYS data
    * @return stkBptData An object with StkBpt data
    * @return ethPrice The price of ETH, USD denominated (expressed with 8 decimals)
    */
@@ -80,19 +80,19 @@ interface IStakedTokenDataProvider {
     external
     view
     returns (
-      StakedTokenData memory stkAaveData,
+      StakedTokenData memory stkPSYSData,
       StakedTokenData memory stkBptData,
       uint256 ethPrice
     );
 
   /**
-   * @notice Returns data of Staked Aave
-   * @return stkAaveData An object with StkAave data
+   * @notice Returns data of Staked PSYS
+   * @return stkPSYSData An object with stkPSYS data
    */
-  function getStkAaveData() external view returns (StakedTokenData memory stkAaveData);
+  function getstkPSYSData() external view returns (StakedTokenData memory stkPSYSData);
 
   /**
-   * @notice Returns data of Staked Bpt Aave
+   * @notice Returns data of Staked Bpt PSYS
    * @return stkBptData An object with StkBpt data
    */
   function getStkBptData() external view returns (StakedTokenData memory stkBptData);
@@ -100,41 +100,47 @@ interface IStakedTokenDataProvider {
   /**
    * @notice Returns user data of all Staked Tokens
    * @param user The address of the user
-   * @return stkAaveData An object with StkAave data
-   * @return stkAaveUserData An object with user data of StkAave
+   * @return stkPSYSData An object with stkPSYS data
+   * @return stkPSYSUserData An object with user data of stkPSYS
    * @return stkBptData An object with StkBpt data
    * @return stkBptUserData An object with user data of StkBpt
    * @return ethPrice The price of ETH, USD denominated (expressed with 8 decimals)
    */
-  function getAllStakedTokenUserData(address user)
+  function getAllStakedTokenUserData(
+    address user
+  )
     external
     view
     returns (
-      StakedTokenData memory stkAaveData,
-      StakedTokenUserData memory stkAaveUserData,
+      StakedTokenData memory stkPSYSData,
+      StakedTokenUserData memory stkPSYSUserData,
       StakedTokenData memory stkBptData,
       StakedTokenUserData memory stkBptUserData,
       uint256 ethPrice
     );
 
   /**
-   * @notice Returns user data of Staked Aave
+   * @notice Returns user data of Staked PSYS
    * @param user The address of the user
-   * @return stkAaveData An object with StkAave data
-   * @return stkAaveUserData An object with user data of StkAave
+   * @return stkPSYSData An object with stkPSYS data
+   * @return stkPSYSUserData An object with user data of stkPSYS
    */
-  function getStkAaveUserData(address user)
+  function getstkPSYSUserData(
+    address user
+  )
     external
     view
-    returns (StakedTokenData memory stkAaveData, StakedTokenUserData memory stkAaveUserData);
+    returns (StakedTokenData memory stkPSYSData, StakedTokenUserData memory stkPSYSUserData);
 
   /**
-   * @notice Returns user data of Staked Bpt Aave
+   * @notice Returns user data of Staked Bpt Pegasys
    * @param user The address of the user
    * @return stkBptData An object with StkBpt data
    * @return stkBptUserData An object with user data of StkBpt
    */
-  function getStkBptAaveUserData(address user)
+  function getStkBptPegasysUserData(
+    address user
+  )
     external
     view
     returns (StakedTokenData memory stkBptData, StakedTokenUserData memory stkBptUserData);

@@ -9,13 +9,13 @@ export const COOLDOWN_SECONDS = '3600'; // 1 hour in seconds
 export const UNSTAKE_WINDOW = '1800'; // 30 min in seconds
 export const DISTRIBUTION_DURATION = '86400'; // 1 day in seconds
 
-export const STAKED_AAVE_NAME = 'Staked Aave';
-export const STAKED_AAVE_SYMBOL = 'stkAAVE';
-export const STAKED_AAVE_DECIMALS = 18;
+export const STAKED_PSYS_NAME = 'Staked PSYS';
+export const STAKED_PSYS_SYMBOL = 'stkPSYS';
+export const STAKED_PSYS_DECIMALS = 18;
 
-export const AAVE_GOVERNANCE_V2 = '0xEC568fffba86c094cf06b22134B23074DFE2252c';
+export const PSYS_GOVERNANCE_V2 = '0xEC568fffba86c094cf06b22134B23074DFE2252c';
 export const UPGRADABLE_CRP_FACTORY = '0x1156C30b08DbF16281c803EAe0d52Eee7652f10C';
-export const AAVE_TOKEN = '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9';
+export const PSYS_TOKEN = '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9';
 export const WETH = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
 export const REWARDS_VAULT = '0x25f2226b597e8f9514b3f68f00f494cf4f286491';
 export const BPOOL_FACTORY = '0x9424B1412450D0f8Fc2255FAf6046b98213B76Bd';
@@ -46,7 +46,7 @@ export const RANDOM_ADDRESSES = [
   '0x0000000000000000000000000000000000000721',
 ];
 
-export const getAaveTokenPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
+export const getPSYStokenPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
   getParamPerNetwork<tEthereumAddress>(
     {
       [eEthereumNetwork.coverage]: ZERO_ADDRESS,
@@ -85,15 +85,15 @@ export const getUnstakeWindowPerNetwork = (network: eEthereumNetwork): tEthereum
     network
   );
 
-export const getAaveAdminPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
+export const getPegasysAdminPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
   getParamPerNetwork<tEthereumAddress>(
     {
       [eEthereumNetwork.coverage]: ZERO_ADDRESS,
       [eEthereumNetwork.hardhat]: ZERO_ADDRESS,
-      [eEthereumNetwork.kovan]: '0x8134929c3dcb1b8b82f27f53424b959fb82182f2', // Aave Governance
+      [eEthereumNetwork.kovan]: '0x8134929c3dcb1b8b82f27f53424b959fb82182f2', // Pegasys Governance
       [eEthereumNetwork.goerli]: ZERO_ADDRESS,
-      [eEthereumNetwork.ropsten]: '0xEd93e49A2d75beA505fD4D1A0Dff745f69F2E997', // Aave Governance
-      [eEthereumNetwork.main]: '0x8a2Efd9A790199F4c94c6effE210fce0B4724f52', // Aave Governance
+      [eEthereumNetwork.ropsten]: '0xEd93e49A2d75beA505fD4D1A0Dff745f69F2E997', // Pegasys Governance
+      [eEthereumNetwork.main]: '0x8a2Efd9A790199F4c94c6effE210fce0B4724f52', // Pegasys Governance
     },
     network
   );
@@ -111,7 +111,7 @@ export const getDistributionDurationPerNetwork = (network: eEthereumNetwork): tE
     network
   );
 
-export const getAaveIncentivesVaultPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
+export const getPegasysIncentivesVaultPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
   getParamPerNetwork<tEthereumAddress>(
     {
       [eEthereumNetwork.coverage]: ZERO_ADDRESS,

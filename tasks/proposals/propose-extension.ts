@@ -1,6 +1,6 @@
 import { task } from 'hardhat/config';
 import {
-  IAaveGovernanceV2__factory,
+  IPegasysGovernanceV2__factory,
   StakedTokenBptRev2__factory,
   StakedTokenV2Rev3,
   StakedTokenV2Rev3__factory,
@@ -10,22 +10,22 @@ import { getDefenderRelaySigner } from '../../helpers/defender-utils';
 import { DRE } from '../../helpers/misc-utils';
 
 task('propose-extension', 'Create some proposals and votes')
-  .addParam('stkAaveProxy')
-  .addParam('stkAaveImpl')
+  .addParam('stkPSYSProxy')
+  .addParam('stkPSYSImpl')
   .addParam('stkBptProxy')
   .addParam('stkBptImpl')
-  .addParam('aaveGovernance')
+  .addParam('pegasysGovernance')
   .addParam('longExecutor')
   .addParam('ipfsHash')
   .addFlag('defender')
   .setAction(
     async (
       {
-        aaveGovernance,
+        pegasysGovernance,
         longExecutor,
         defender,
-        stkAaveProxy,
-        stkAaveImpl,
+        stkPSYSProxy,
+        stkPSYSImpl,
         stkBptProxy,
         stkBptImpl,
         ipfsHash,
@@ -42,8 +42,8 @@ task('propose-extension', 'Create some proposals and votes')
         proposer = signer;
       }
 
-      if (!stkAaveImpl) {
-        throw '[hh-task][propose-extension] stkAaveImpl param is missing';
+      if (!stkPSYSImpl) {
+        throw '[hh-task][propose-extension] stkPSYSImpl param is missing';
       }
       if (!stkBptImpl) {
         throw '[hh-task][propose-extension] stkBptImpl param is missing';
@@ -51,8 +51,8 @@ task('propose-extension', 'Create some proposals and votes')
       if (!longExecutor) {
         throw '[hh-task][propose-extension] longExecutor param is missing';
       }
-      if (!stkAaveProxy) {
-        throw '[hh-task][propose-extension] stkAaveProxy param is missing';
+      if (!stkPSYSProxy) {
+        throw '[hh-task][propose-extension] stkPSYSProxy param is missing';
       }
       if (!stkBptProxy) {
         throw '[hh-task][propose-extension] stkBptProxy param is missing';
@@ -61,14 +61,14 @@ task('propose-extension', 'Create some proposals and votes')
         throw '[hh-task][propose-extension] ipfsHash param is missing';
       }
 
-      // Calldata for StkAave implementation
-      const payloadStkAave = StakedTokenV2Rev3__factory.connect(
-        stkAaveImpl,
+      // Calldata for stkPSYS implementation
+      const payloadstkPSYS = StakedTokenV2Rev3__factory.connect(
+        stkPSYSImpl,
         proposer
       ).interface.encodeFunctionData('initialize');
-      const callDataStkAave = DRE.ethers.utils.defaultAbiCoder.encode(
+      const callDatastkPSYS = DRE.ethers.utils.defaultAbiCoder.encode(
         ['address', 'bytes'],
-        [stkAaveImpl, payloadStkAave]
+        [stkPSYSImpl, payloadstkPSYS]
       );
 
       // Calldata for StkBpt implementation
@@ -82,15 +82,15 @@ task('propose-extension', 'Create some proposals and votes')
         [stkBptImpl, payloadStkBpt]
       );
       const executeSignature = 'upgradeToAndCall(address,bytes)';
-      const gov = await IAaveGovernanceV2__factory.connect(aaveGovernance, proposer);
+      const gov = await IPegasysGovernanceV2__factory.connect(pegasysGovernance, proposer);
 
       try {
         const tx = await gov.create(
           longExecutor,
-          [stkAaveProxy, stkBptProxy],
+          [stkPSYSProxy, stkBptProxy],
           ['0', '0'],
           [executeSignature, executeSignature],
-          [callDataStkAave, callDataStkBpt],
+          [callDatastkPSYS, callDataStkBpt],
           [false, false],
           ipfsHash,
           { gasLimit: 1000000 }

@@ -13,7 +13,7 @@ import {
 import {
   UPGRADABLE_CRP_FACTORY,
   WETH,
-  AAVE_TOKEN,
+  PSYS_TOKEN,
   RESERVE_CONTROLER,
   REWARDS_VAULT,
   SHORT_EXECUTOR,
@@ -21,7 +21,7 @@ import {
   BPOOL_FACTORY,
   CRP_IMPLEMENTATION,
   LONG_EXECUTOR,
-  AAVE_GOVERNANCE_V2,
+  PSYS_GOVERNANCE_V2,
   PROXY_CRP_ADMIN,
 } from '../../helpers/constants';
 import {
@@ -40,40 +40,40 @@ import { MintableErc20 } from '../../types/MintableErc20';
 import { IbPool } from '../../types/IbPool';
 import { IConfigurableRightsPool } from '../../types/IConfigurableRightsPool';
 import { StakedTokenV3 } from '../../types/StakedTokenV3';
-import { IAaveGovernanceV2 } from '../../types/IAaveGovernanceV2';
-import { IControllerAaveEcosystemReserve } from '../../types/IControllerAaveEcosystemReserve';
+import { IPegasysGovernanceV2 } from '../../types/IPegasysGovernanceV2';
+import { IControllerPegasysEcosystemReserve } from '../../types/IControllerPegasysEcosystemReserve';
 import { parse } from 'path';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-with-address';
-import { testDeployAaveStakeV1 } from '../helpers/deploy';
+import { testDeploypsysStakeV1 } from '../helpers/deploy';
 
 const { expect } = require('chai');
 
 const WETH_HOLDER = '0x1840c62fD7e2396e470377e6B2a833F3A1E96221';
-// const AAVE_WETH_HOLDER = '0x7d439999e63b75618b9c6c69d6efed0c2bc295c8';
+// const PSYS_WETH_HOLDER = '0x7d439999e63b75618b9c6c69d6efed0c2bc295c8';
 const MULTI_SIG = '0xC4E1A298c0D712fcF6Dd9124075b27177336f752';
 const PROXY_CRP_ADMIHN = LONG_EXECUTOR;
 const REWARDS_RECEIVER = '0xdd5ce83026f622d574ADa5e71D0a1f34700fA854'; // random
 const EMISSION_MANAGER = SHORT_EXECUTOR;
 const RESERVER_ALLOWANCE = parseEther('100000');
 
-const AAVE_WEIGHT = parseEther('40'); // 80 %
+const PSYS_WEIGHT = parseEther('40'); // 80 %
 const WETH_WEIGHT = parseEther('10'); // 20 %
-const INIT_AAVE_PRICE = 502; // 1 ETH = 5.14 AAVE
+const INIT_PSYS_PRICE = 502; // 1 ETH = 5.14 PSYS
 const PRICE_PRECISION = 100;
 const INIT_TOKEN_SUPPLY_DIVIDER = 100;
 
-// INIT AAVE SUPPLY = 40 / 100 = 0.4
-const INIT_AAVE_POOL_SUPPLY = AAVE_WEIGHT.div(INIT_TOKEN_SUPPLY_DIVIDER);
+// INIT PSYS SUPPLY = 40 / 100 = 0.4
+const INIT_PSYS_POOL_SUPPLY = PSYS_WEIGHT.div(INIT_TOKEN_SUPPLY_DIVIDER);
 const INIT_WETH_POOL_SUPPLY = WETH_WEIGHT.div(INIT_TOKEN_SUPPLY_DIVIDER)
-  .div(INIT_AAVE_PRICE)
+  .div(INIT_PSYS_PRICE)
   .mul(PRICE_PRECISION);
-// Requirement: 1000 BPT = aprox 1 AAVE. 500 shares for 0.4 AAVE + 0.1 AAVE worth of WETH
-const INIT_SHARE_SUPPLY = INIT_AAVE_POOL_SUPPLY.mul(10).div(8).mul(1000);
+// Requirement: 1000 BPT = aprox 1 PSYS. 500 shares for 0.4 PSYS + 0.1 PSYS worth of WETH
+const INIT_SHARE_SUPPLY = INIT_PSYS_POOL_SUPPLY.mul(10).div(8).mul(1000);
 // 0.1 %
 const SWAP_FEE = parseEther('0.04');
 const INFINITE_APPROVAL_AMOUNT = parseEther('100000000000');
 console.log(INIT_WETH_POOL_SUPPLY.toString());
-// Staked AAVE
+// Staked PSYS
 const COOLDOWN_SECONDS = '864000'; // 10 days
 const UNSTAKE_WINDOW = '172800'; // 2 days
 const DISTRIBUTION_DURATION = '15780000'; // 6 month
@@ -83,29 +83,29 @@ rawBRE.run('set-dre').then(async () => {
     let CRPFactory: IcrpFactory;
     let CRPool: IConfigurableRightsPool; // Configurable Smart Pool
     let BPShares: MintableErc20; // Configurable Smart pool, token interface
-    let aave: MintableErc20;
+    let psys: MintableErc20;
     let weth: MintableErc20;
     let BPool: IbPool; // BPool
-    let gov: IAaveGovernanceV2;
-    let ReserveController: IControllerAaveEcosystemReserve;
+    let gov: IPegasysGovernanceV2;
+    let ReserveController: IControllerPegasysEcosystemReserve;
     let stakedBPS: StakedTokenV3; // bptshare
     let deployerSigner: ethers.providers.JsonRpcSigner;
     let holderSigner: ethers.providers.JsonRpcSigner;
     let wethHolderSigner: ethers.providers.JsonRpcSigner;
     let shortExecutorSigner: ethers.providers.JsonRpcSigner;
     let holderWethBalance: ethers.BigNumber;
-    let holderAaveBalance: ethers.BigNumber;
+    let holderPSYSBalance: ethers.BigNumber;
     let deployer = testEnv.users[2];
     before(async () => {
       await initializeMakeSuite();
       await impersonateAccountsHardhat([MULTI_SIG, WETH_HOLDER, SHORT_EXECUTOR]);
       deployer = testEnv.users[2];
-      aave = await getERC20Contract(AAVE_TOKEN);
+      psys = await getERC20Contract(PSYS_TOKEN);
       weth = await getERC20Contract(WETH);
       gov = (await rawBRE.ethers.getContractAt(
-        'IAaveGovernanceV2',
-        AAVE_GOVERNANCE_V2
-      )) as IAaveGovernanceV2;
+        'IPegasysGovernanceV2',
+        PSYS_GOVERNANCE_V2
+      )) as IPegasysGovernanceV2;
       ReserveController = await getController(RESERVE_CONTROLER);
       CRPFactory = await getCRPFactoryContract(UPGRADABLE_CRP_FACTORY);
       holderSigner = DRE.ethers.provider.getSigner(MULTI_SIG);
@@ -121,7 +121,7 @@ rawBRE.run('set-dre').then(async () => {
     });
     beforeEach(async () => {
       holderWethBalance = await weth.balanceOf(MULTI_SIG);
-      holderAaveBalance = await aave.balanceOf(MULTI_SIG);
+      holderPSYSBalance = await psys.balanceOf(MULTI_SIG);
     });
     it('Creates a new CRP', async () => {
       let CRPAddress = zeroAddress();
@@ -137,10 +137,10 @@ rawBRE.run('set-dre').then(async () => {
           BPOOL_FACTORY,
           {
             poolTokenSymbol: 'ABPT',
-            poolTokenName: 'Aave Balance Pool Token',
-            constituentTokens: [AAVE_TOKEN, WETH],
-            tokenBalances: [INIT_AAVE_POOL_SUPPLY, INIT_WETH_POOL_SUPPLY],
-            tokenWeights: [AAVE_WEIGHT, WETH_WEIGHT],
+            poolTokenName: 'PSYS Balance Pool Token',
+            constituentTokens: [PSYS_TOKEN, WETH],
+            tokenBalances: [INIT_PSYS_POOL_SUPPLY, INIT_WETH_POOL_SUPPLY],
+            tokenWeights: [PSYS_WEIGHT, WETH_WEIGHT],
             swapFee: SWAP_FEE,
           },
           {
@@ -169,9 +169,9 @@ rawBRE.run('set-dre').then(async () => {
     it('Gives control to multisig', async () => {
       await waitForTx(await CRPool.connect(deployer.signer).setController(MULTI_SIG));
     });
-    it('Creates the smart Pool: 80/20 AAVE/ETH', async () => {
+    it('Creates the smart Pool: 80/20 PSYS/ETH', async () => {
       await waitForTx(
-        await aave.connect(holderSigner).approve(CRPool.address, INFINITE_APPROVAL_AMOUNT)
+        await psys.connect(holderSigner).approve(CRPool.address, INFINITE_APPROVAL_AMOUNT)
       );
       await waitForTx(
         await weth.connect(holderSigner).approve(CRPool.address, INFINITE_APPROVAL_AMOUNT)
@@ -189,8 +189,8 @@ rawBRE.run('set-dre').then(async () => {
 
       expect(await BPShares.balanceOf(MULTI_SIG)).to.be.equal(INIT_SHARE_SUPPLY);
       expect(await BPShares.totalSupply()).to.be.equal(INIT_SHARE_SUPPLY);
-      expect(await aave.balanceOf(MULTI_SIG)).to.be.equal(
-        holderAaveBalance.sub(INIT_AAVE_POOL_SUPPLY)
+      expect(await psys.balanceOf(MULTI_SIG)).to.be.equal(
+        holderPSYSBalance.sub(INIT_PSYS_POOL_SUPPLY)
       );
       expect(await weth.balanceOf(MULTI_SIG)).to.be.equal(
         holderWethBalance.sub(INIT_WETH_POOL_SUPPLY)
@@ -209,50 +209,50 @@ rawBRE.run('set-dre').then(async () => {
       );
       expect(await BPShares.balanceOf(MULTI_SIG)).to.be.equal(INIT_SHARE_SUPPLY.add(BOUGHT_SHARES));
     });
-    it('Let a user make a swap Weth => Aave', async () => {
+    it('Let a user make a swap Weth => PSYS', async () => {
       await waitForTx(
-        await aave.connect(holderSigner).approve(BPool.address, INFINITE_APPROVAL_AMOUNT)
+        await psys.connect(holderSigner).approve(BPool.address, INFINITE_APPROVAL_AMOUNT)
       );
       await waitForTx(
         await weth.connect(holderSigner).approve(BPool.address, INFINITE_APPROVAL_AMOUNT)
       );
-      // swapping weth for aave. Price is currently 1 AAVE = 10 ETH
+      // swapping weth for psys. Price is currently 1 PSYS = 10 ETH
       const SOLD_WETH = parseEther('0.0004');
       await waitForTx(
         await BPool.connect(holderSigner).swapExactAmountIn(
           WETH,
           SOLD_WETH,
-          AAVE_TOKEN,
+          PSYS_TOKEN,
           parseEther('0.00001'),
-          parseEther('0.0005').mul(INIT_AAVE_PRICE)
+          parseEther('0.0005').mul(INIT_PSYS_PRICE)
         )
       );
       expect(await weth.balanceOf(MULTI_SIG)).to.be.equal(holderWethBalance.sub(SOLD_WETH));
     });
-    it('Let a user make a swap AAVE => WETH', async () => {
-      const SOLD_AAVE = parseEther('0.005');
+    it('Let a user make a swap PSYS => WETH', async () => {
+      const SOLD_PSYS = parseEther('0.005');
       await waitForTx(
         await BPool.connect(holderSigner).swapExactAmountIn(
-          AAVE_TOKEN,
-          SOLD_AAVE,
+          PSYS_TOKEN,
+          SOLD_PSYS,
           WETH,
           parseEther('0.0002'),
           parseEther('100')
         )
       );
-      expect(await aave.balanceOf(MULTI_SIG)).to.be.equal(holderAaveBalance.sub(SOLD_AAVE));
+      expect(await psys.balanceOf(MULTI_SIG)).to.be.equal(holderPSYSBalance.sub(SOLD_PSYS));
     });
     it('Creates the staked token overlay', async () => {
       const { deployer } = testEnv;
       stakedBPS = await deployStakedTokenV3([
         CRPool.address,
-        AAVE_TOKEN,
+        PSYS_TOKEN,
         COOLDOWN_SECONDS,
         UNSTAKE_WINDOW,
         REWARDS_VAULT,
         EMISSION_MANAGER,
         DISTRIBUTION_DURATION,
-        'staked AAVE/ETH BPT',
+        'staked PSYS/ETH BPT',
         'stkABPT',
         '18',
         zeroAddress(),
@@ -276,7 +276,7 @@ rawBRE.run('set-dre').then(async () => {
     });
     it('Execute the vault to approve stkBPShares', async () => {
       await ReserveController.connect(shortExecutorSigner).approve(
-        aave.address,
+        psys.address,
         stakedBPS.address,
         RESERVER_ALLOWANCE
       );
@@ -292,7 +292,7 @@ rawBRE.run('set-dre').then(async () => {
       expect(await stakedBPS.balanceOf(MULTI_SIG)).to.be.equal(STAKED_SHARES);
       await increaseTimeAndMine(60 * 60 * 24 * 3);
       await waitForTx(await stakedBPS.connect(holderSigner).claimRewards(REWARDS_RECEIVER, 1));
-      expect(await aave.balanceOf(REWARDS_RECEIVER)).to.be.equal(1);
+      expect(await psys.balanceOf(REWARDS_RECEIVER)).to.be.equal(1);
     });
   });
 });
