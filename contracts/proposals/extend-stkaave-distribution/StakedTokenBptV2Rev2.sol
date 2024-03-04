@@ -90,11 +90,7 @@ interface IERC20 {
    *
    * Emits a {Transfer} event.
    */
-  function transferFrom(
-    address sender,
-    address recipient,
-    uint256 amount
-  ) external returns (bool);
+  function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
 
   /**
    * @dev Emitted when `value` tokens are moved from one account (`from`) to
@@ -228,13 +224,10 @@ contract ERC20 is Context, IERC20 {
   /**
    * @dev See {IERC20-allowance}.
    */
-  function allowance(address owner, address spender)
-    public
-    view
-    virtual
-    override
-    returns (uint256)
-  {
+  function allowance(
+    address owner,
+    address spender
+  ) public view virtual override returns (uint256) {
     return _allowances[owner][spender];
   }
 
@@ -307,11 +300,10 @@ contract ERC20 is Context, IERC20 {
    * - `spender` must have allowance for the caller of at least
    * `subtractedValue`.
    */
-  function decreaseAllowance(address spender, uint256 subtractedValue)
-    public
-    virtual
-    returns (bool)
-  {
+  function decreaseAllowance(
+    address spender,
+    uint256 subtractedValue
+  ) public virtual returns (bool) {
     _approve(
       _msgSender(),
       spender,
@@ -337,11 +329,7 @@ contract ERC20 is Context, IERC20 {
    * - `recipient` cannot be the zero address.
    * - `sender` must have a balance of at least `amount`.
    */
-  function _transfer(
-    address sender,
-    address recipient,
-    uint256 amount
-  ) internal virtual {
+  function _transfer(address sender, address recipient, uint256 amount) internal virtual {
     require(sender != address(0), 'ERC20: transfer from the zero address');
     require(recipient != address(0), 'ERC20: transfer to the zero address');
 
@@ -405,11 +393,7 @@ contract ERC20 is Context, IERC20 {
    * - `owner` cannot be the zero address.
    * - `spender` cannot be the zero address.
    */
-  function _approve(
-    address owner,
-    address spender,
-    uint256 amount
-  ) internal virtual {
+  function _approve(address owner, address spender, uint256 amount) internal virtual {
     require(owner != address(0), 'ERC20: approve from the zero address');
     require(spender != address(0), 'ERC20: approve to the zero address');
 
@@ -442,16 +426,12 @@ contract ERC20 is Context, IERC20 {
    *
    * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
    */
-  function _beforeTokenTransfer(
-    address from,
-    address to,
-    uint256 amount
-  ) internal virtual {}
+  function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual {}
 }
 
-// File contracts/interfaces/IStakedAave.sol
+// File contracts/interfaces/IStakedPSYS.sol
 
-interface IStakedAave {
+interface IStakedPSYS {
   function stake(address to, uint256 amount) external;
 
   function redeem(address to, uint256 amount) external;
@@ -464,11 +444,7 @@ interface IStakedAave {
 // File contracts/interfaces/ITransferHook.sol
 
 interface ITransferHook {
-  function onTransfer(
-    address from,
-    address to,
-    uint256 amount
-  ) external;
+  function onTransfer(address from, address to, uint256 amount) external;
 }
 
 // File contracts/lib/DistributionTypes.sol
@@ -542,11 +518,7 @@ library SafeMath {
    * Requirements:
    * - Subtraction cannot overflow.
    */
-  function sub(
-    uint256 a,
-    uint256 b,
-    string memory errorMessage
-  ) internal pure returns (uint256) {
+  function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
     require(b <= a, errorMessage);
     uint256 c = a - b;
 
@@ -602,11 +574,7 @@ library SafeMath {
    * Requirements:
    * - The divisor cannot be zero.
    */
-  function div(
-    uint256 a,
-    uint256 b,
-    string memory errorMessage
-  ) internal pure returns (uint256) {
+  function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
     // Solidity only automatically asserts when dividing by 0
     require(b > 0, errorMessage);
     uint256 c = a / b;
@@ -641,11 +609,7 @@ library SafeMath {
    * Requirements:
    * - The divisor cannot be zero.
    */
-  function mod(
-    uint256 a,
-    uint256 b,
-    string memory errorMessage
-  ) internal pure returns (uint256) {
+  function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
     require(b != 0, errorMessage);
     return a % b;
   }
@@ -729,28 +693,15 @@ library SafeERC20 {
   using SafeMath for uint256;
   using Address for address;
 
-  function safeTransfer(
-    IERC20 token,
-    address to,
-    uint256 value
-  ) internal {
+  function safeTransfer(IERC20 token, address to, uint256 value) internal {
     callOptionalReturn(token, abi.encodeWithSelector(token.transfer.selector, to, value));
   }
 
-  function safeTransferFrom(
-    IERC20 token,
-    address from,
-    address to,
-    uint256 value
-  ) internal {
+  function safeTransferFrom(IERC20 token, address from, address to, uint256 value) internal {
     callOptionalReturn(token, abi.encodeWithSelector(token.transferFrom.selector, from, to, value));
   }
 
-  function safeApprove(
-    IERC20 token,
-    address spender,
-    uint256 value
-  ) internal {
+  function safeApprove(IERC20 token, address spender, uint256 value) internal {
     require(
       (value == 0) || (token.allowance(address(this), spender) == 0),
       'SafeERC20: approve from non-zero to non-zero allowance'
@@ -787,7 +738,7 @@ library SafeERC20 {
  * a parent initializer twice, or ensure that all initializers are idempotent,
  * because this is not dealt with automatically as with constructors.
  *
- * @author Aave, inspired by the OpenZeppelin Initializable contract
+ * @author , inspired by the OpenZeppelin Initializable contract
  */
 abstract contract VersionedInitializable {
   /**
@@ -815,21 +766,22 @@ abstract contract VersionedInitializable {
   uint256[50] private ______gap;
 }
 
-// File contracts/interfaces/IAaveDistributionManager.sol
+// File contracts/interfaces/IPegasysDistributionManager.sol
 
-interface IAaveDistributionManager {
-  function configureAssets(DistributionTypes.AssetConfigInput[] calldata assetsConfigInput)
-    external;
+interface IPegasysDistributionManager {
+  function configureAssets(
+    DistributionTypes.AssetConfigInput[] calldata assetsConfigInput
+  ) external;
 }
 
-// File contracts/stake/AaveDistributionManager.sol
+// File contracts/stake/PegasysDistributionManager.sol
 
 /**
- * @title AaveDistributionManager
+ * @title PegasysDistributionManager
  * @notice Accounting contract to manage multiple staking distributions
- * @author Aave
+ * @author
  **/
-contract AaveDistributionManager is IAaveDistributionManager {
+contract PegasysDistributionManager is IPegasysDistributionManager {
   using SafeMath for uint256;
 
   struct AssetData {
@@ -860,10 +812,9 @@ contract AaveDistributionManager is IAaveDistributionManager {
    * @dev Configures the distribution of rewards for a list of assets
    * @param assetsConfigInput The list of configurations to apply
    **/
-  function configureAssets(DistributionTypes.AssetConfigInput[] calldata assetsConfigInput)
-    external
-    override
-  {
+  function configureAssets(
+    DistributionTypes.AssetConfigInput[] calldata assetsConfigInput
+  ) external override {
     require(msg.sender == EMISSION_MANAGER, 'ONLY_EMISSION_MANAGER');
 
     for (uint256 i = 0; i < assetsConfigInput.length; i++) {
@@ -886,7 +837,7 @@ contract AaveDistributionManager is IAaveDistributionManager {
 
   /**
    * @dev Updates the state of one distribution, mainly rewards index and timestamp
-   * @param underlyingAsset The address used as key in the distribution, for example sAAVE or the aTokens addresses on Aave
+   * @param underlyingAsset The address used as key in the distribution, for example sPSYS or the aTokens addresses on Pegasys
    * @param assetConfig Storage pointer to the distribution's config
    * @param totalStaked Current total of staked assets for this distribution
    * @return The new distribution index
@@ -903,8 +854,12 @@ contract AaveDistributionManager is IAaveDistributionManager {
       return oldIndex;
     }
 
-    uint256 newIndex =
-      _getAssetIndex(oldIndex, assetConfig.emissionPerSecond, lastUpdateTimestamp, totalStaked);
+    uint256 newIndex = _getAssetIndex(
+      oldIndex,
+      assetConfig.emissionPerSecond,
+      lastUpdateTimestamp,
+      totalStaked
+    );
 
     if (newIndex != oldIndex) {
       assetConfig.index = newIndex;
@@ -954,10 +909,10 @@ contract AaveDistributionManager is IAaveDistributionManager {
    * @param stakes List of structs of the user data related with his stake
    * @return The accrued rewards for the user until the moment
    **/
-  function _claimRewards(address user, DistributionTypes.UserStakeInput[] memory stakes)
-    internal
-    returns (uint256)
-  {
+  function _claimRewards(
+    address user,
+    DistributionTypes.UserStakeInput[] memory stakes
+  ) internal returns (uint256) {
     uint256 accruedRewards = 0;
 
     for (uint256 i = 0; i < stakes.length; i++) {
@@ -980,22 +935,20 @@ contract AaveDistributionManager is IAaveDistributionManager {
    * @param stakes List of structs of the user data related with his stake
    * @return The accrued rewards for the user until the moment
    **/
-  function _getUnclaimedRewards(address user, DistributionTypes.UserStakeInput[] memory stakes)
-    internal
-    view
-    returns (uint256)
-  {
+  function _getUnclaimedRewards(
+    address user,
+    DistributionTypes.UserStakeInput[] memory stakes
+  ) internal view returns (uint256) {
     uint256 accruedRewards = 0;
 
     for (uint256 i = 0; i < stakes.length; i++) {
       AssetData storage assetConfig = assets[stakes[i].underlyingAsset];
-      uint256 assetIndex =
-        _getAssetIndex(
-          assetConfig.index,
-          assetConfig.emissionPerSecond,
-          assetConfig.lastUpdateTimestamp,
-          stakes[i].totalStaked
-        );
+      uint256 assetIndex = _getAssetIndex(
+        assetConfig.index,
+        assetConfig.emissionPerSecond,
+        assetConfig.lastUpdateTimestamp,
+        stakes[i].totalStaked
+      );
 
       accruedRewards = accruedRewards.add(
         _getRewards(stakes[i].stakedByUser, assetIndex, assetConfig.users[user])
@@ -1016,7 +969,7 @@ contract AaveDistributionManager is IAaveDistributionManager {
     uint256 reserveIndex,
     uint256 userIndex
   ) internal pure returns (uint256) {
-    return principalUserBalance.mul(reserveIndex.sub(userIndex)).div(10**uint256(PRECISION));
+    return principalUserBalance.mul(reserveIndex.sub(userIndex)).div(10 ** uint256(PRECISION));
   }
 
   /**
@@ -1042,11 +995,12 @@ contract AaveDistributionManager is IAaveDistributionManager {
       return currentIndex;
     }
 
-    uint256 currentTimestamp =
-      block.timestamp > DISTRIBUTION_END ? DISTRIBUTION_END : block.timestamp;
+    uint256 currentTimestamp = block.timestamp > DISTRIBUTION_END
+      ? DISTRIBUTION_END
+      : block.timestamp;
     uint256 timeDelta = currentTimestamp.sub(lastUpdateTimestamp);
     return
-      emissionPerSecond.mul(timeDelta).mul(10**uint256(PRECISION)).div(totalBalance).add(
+      emissionPerSecond.mul(timeDelta).mul(10 ** uint256(PRECISION)).div(totalBalance).add(
         currentIndex
       );
   }
@@ -1078,7 +1032,10 @@ interface IERC20Detailed is IERC20 {
 // File @aave/aave-token/contracts/interfaces/IGovernancePowerDelegationToken.sol@v1.0.4
 
 interface IGovernancePowerDelegationToken {
-  enum DelegationType {VOTING_POWER, PROPOSITION_POWER}
+  enum DelegationType {
+    VOTING_POWER,
+    PROPOSITION_POWER
+  }
 
   /**
    * @dev emitted when a user delegates to another
@@ -1117,22 +1074,20 @@ interface IGovernancePowerDelegationToken {
    * @dev returns the delegatee of an user
    * @param delegator the address of the delegator
    **/
-  function getDelegateeByType(address delegator, DelegationType delegationType)
-    external
-    view
-    virtual
-    returns (address);
+  function getDelegateeByType(
+    address delegator,
+    DelegationType delegationType
+  ) external view virtual returns (address);
 
   /**
    * @dev returns the current delegated power of a user. The current power is the
    * power delegated at the time of the last snapshot
    * @param user the user
    **/
-  function getPowerCurrent(address user, DelegationType delegationType)
-    external
-    view
-    virtual
-    returns (uint256);
+  function getPowerCurrent(
+    address user,
+    DelegationType delegationType
+  ) external view virtual returns (uint256);
 
   /**
    * @dev returns the delegated power of a user at a certain block
@@ -1153,8 +1108,8 @@ interface IGovernancePowerDelegationToken {
 // File @aave/aave-token/contracts/token/base/GovernancePowerDelegationERC20.sol@v1.0.4
 
 /**
- * @notice implementation of the AAVE token contract
- * @author Aave
+ * @notice implementation of the PSYS token contract
+ * @author
  */
 abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDelegationToken {
   using SafeMath for uint256;
@@ -1193,12 +1148,10 @@ abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDeleg
    * @dev returns the delegatee of an user
    * @param delegator the address of the delegator
    **/
-  function getDelegateeByType(address delegator, DelegationType delegationType)
-    external
-    view
-    override
-    returns (address)
-  {
+  function getDelegateeByType(
+    address delegator,
+    DelegationType delegationType
+  ) external view override returns (address) {
     (, , mapping(address => address) storage delegates) = _getDelegationDataByType(delegationType);
 
     return _getDelegatee(delegator, delegates);
@@ -1209,12 +1162,10 @@ abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDeleg
    * power delegated at the time of the last snapshot
    * @param user the user
    **/
-  function getPowerCurrent(address user, DelegationType delegationType)
-    external
-    view
-    override
-    returns (uint256)
-  {
+  function getPowerCurrent(
+    address user,
+    DelegationType delegationType
+  ) external view override returns (uint256) {
     (
       mapping(address => mapping(uint256 => Snapshot)) storage snapshots,
       mapping(address => uint256) storage snapshotsCounts,
@@ -1245,8 +1196,8 @@ abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDeleg
   /**
    * @dev returns the total supply at a certain block number
    * used by the voting strategy contracts to calculate the total votes needed for threshold/quorum
-   * In this initial implementation with no AAVE minting, simply returns the current supply
-   * A snapshots mapping will need to be added in case a mint function is added to the AAVE token in the future
+   * In this initial implementation with no PSYS minting, simply returns the current supply
+   * A snapshots mapping will need to be added in case a mint function is added to the PSYS token in the future
    **/
   function totalSupplyAt(uint256 blockNumber) external view override returns (uint256) {
     return super.totalSupply();
@@ -1390,11 +1341,13 @@ abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDeleg
   /**
    * @dev returns the delegation data (snapshot, snapshotsCount, list of delegates) by delegation type
    * NOTE: Ideal implementation would have mapped this in a struct by delegation type. Unfortunately,
-   * the AAVE token and StakeToken already include a mapping for the snapshots, so we require contracts
+   * the PSYS token and StakeToken already include a mapping for the snapshots, so we require contracts
    * who inherit from this to provide access to the delegation data by overriding this method.
    * @param delegationType the type of delegation
    **/
-  function _getDelegationDataByType(DelegationType delegationType)
+  function _getDelegationDataByType(
+    DelegationType delegationType
+  )
     internal
     view
     virtual
@@ -1440,11 +1393,10 @@ abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDeleg
    * @param delegator the address of the user for which return the delegatee
    * @param delegates the array of delegates for a particular type of delegation
    **/
-  function _getDelegatee(address delegator, mapping(address => address) storage delegates)
-    internal
-    view
-    returns (address)
-  {
+  function _getDelegatee(
+    address delegator,
+    mapping(address => address) storage delegates
+  ) internal view returns (address) {
     address previousDelegatee = delegates[delegator];
 
     if (previousDelegatee == address(0)) {
@@ -1460,7 +1412,7 @@ abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDeleg
 /**
  * @title ERC20WithSnapshot
  * @notice ERC20 including snapshots of balances on transfer-related actions
- * @author Aave
+ * @author
  **/
 abstract contract GovernancePowerWithSnapshot is GovernancePowerDelegationERC20 {
   using SafeMath for uint256;
@@ -1469,18 +1421,18 @@ abstract contract GovernancePowerWithSnapshot is GovernancePowerDelegationERC20 
    * @dev The following storage layout points to the prior StakedToken.sol implementation:
    * _snapshots => _votingSnapshots
    * _snapshotsCounts =>  _votingSnapshotsCounts
-   * _aaveGovernance => _aaveGovernance
+   * _pegasysGovernance => _pegasysGovernance
    */
   mapping(address => mapping(uint256 => Snapshot)) public _votingSnapshots;
   mapping(address => uint256) public _votingSnapshotsCounts;
 
-  /// @dev reference to the Aave governance contract to call (if initialized) on _beforeTokenTransfer
-  /// !!! IMPORTANT The Aave governance is considered a trustable contract, being its responsibility
+  /// @dev reference to the Pegasys governance contract to call (if initialized) on _beforeTokenTransfer
+  /// !!! IMPORTANT The Pegasys governance is considered a trustable contract, being its responsibility
   /// to control all potential reentrancies by calling back the this contract
-  ITransferHook public _aaveGovernance;
+  ITransferHook public _pegasysGovernance;
 
-  function _setAaveGovernance(ITransferHook aaveGovernance) internal virtual {
-    _aaveGovernance = aaveGovernance;
+  function _setPegasysGovernance(ITransferHook pegasysGovernance) internal virtual {
+    _pegasysGovernance = pegasysGovernance;
   }
 }
 
@@ -1488,14 +1440,14 @@ abstract contract GovernancePowerWithSnapshot is GovernancePowerDelegationERC20 
 
 /**
  * @title StakedToken
- * @notice Contract to stake Aave token, tokenize the position and get rewards, inheriting from a distribution manager contract
- * @author Aave
+ * @notice Contract to stake PSYS token, tokenize the position and get rewards, inheriting from a distribution manager contract
+ * @author
  **/
 contract StakedTokenBptRev2 is
-  IStakedAave,
+  IStakedPSYS,
   GovernancePowerWithSnapshot,
   VersionedInitializable,
-  AaveDistributionManager
+  PegasysDistributionManager
 {
   using SafeMath for uint256;
   using SafeERC20 for IERC20;
@@ -1555,13 +1507,13 @@ contract StakedTokenBptRev2 is
     string memory symbol,
     uint8 decimals,
     address governance
-  ) public ERC20(name, symbol) AaveDistributionManager(emissionManager, distributionDuration) {
+  ) public ERC20(name, symbol) PegasysDistributionManager(emissionManager, distributionDuration) {
     STAKED_TOKEN = stakedToken;
     REWARD_TOKEN = rewardToken;
     COOLDOWN_SECONDS = cooldownSeconds;
     UNSTAKE_WINDOW = unstakeWindow;
     REWARDS_VAULT = rewardsVault;
-    _aaveGovernance = ITransferHook(governance);
+    _pegasysGovernance = ITransferHook(governance);
     ERC20._setupDecimals(decimals);
   }
 
@@ -1600,8 +1552,12 @@ contract StakedTokenBptRev2 is
     require(amount != 0, 'INVALID_ZERO_AMOUNT');
     uint256 balanceOfUser = balanceOf(onBehalfOf);
 
-    uint256 accruedRewards =
-      _updateUserAssetInternal(onBehalfOf, address(this), balanceOfUser, totalSupply());
+    uint256 accruedRewards = _updateUserAssetInternal(
+      onBehalfOf,
+      address(this),
+      balanceOfUser,
+      totalSupply()
+    );
     if (accruedRewards != 0) {
       emit RewardsAccrued(onBehalfOf, accruedRewards);
       stakerRewardsToClaim[onBehalfOf] = stakerRewardsToClaim[onBehalfOf].add(accruedRewards);
@@ -1667,8 +1623,11 @@ contract StakedTokenBptRev2 is
    * @param amount Amount to stake
    **/
   function claimRewards(address to, uint256 amount) external override {
-    uint256 newTotalRewards =
-      _updateCurrentUnclaimedRewards(msg.sender, balanceOf(msg.sender), false);
+    uint256 newTotalRewards = _updateCurrentUnclaimedRewards(
+      msg.sender,
+      balanceOf(msg.sender),
+      false
+    );
     uint256 amountToClaim = (amount == type(uint256).max) ? newTotalRewards : amount;
 
     stakerRewardsToClaim[msg.sender] = newTotalRewards.sub(amountToClaim, 'INVALID_AMOUNT');
@@ -1684,11 +1643,7 @@ contract StakedTokenBptRev2 is
    * @param to Address to transfer to
    * @param amount Amount to transfer
    **/
-  function _transfer(
-    address from,
-    address to,
-    uint256 amount
-  ) internal override {
+  function _transfer(address from, address to, uint256 amount) internal override {
     uint256 balanceOfFrom = balanceOf(from);
     // Sender
     _updateCurrentUnclaimedRewards(from, balanceOfFrom, true);
@@ -1726,8 +1681,12 @@ contract StakedTokenBptRev2 is
     uint256 userBalance,
     bool updateStorage
   ) internal returns (uint256) {
-    uint256 accruedRewards =
-      _updateUserAssetInternal(user, address(this), userBalance, totalSupply());
+    uint256 accruedRewards = _updateUserAssetInternal(
+      user,
+      address(this),
+      userBalance,
+      totalSupply()
+    );
     uint256 unclaimedRewards = stakerRewardsToClaim[user].add(accruedRewards);
 
     if (accruedRewards != 0) {
@@ -1765,24 +1724,23 @@ contract StakedTokenBptRev2 is
       return 0;
     }
 
-    uint256 minimalValidCooldownTimestamp =
-      block.timestamp.sub(COOLDOWN_SECONDS).sub(UNSTAKE_WINDOW);
+    uint256 minimalValidCooldownTimestamp = block.timestamp.sub(COOLDOWN_SECONDS).sub(
+      UNSTAKE_WINDOW
+    );
 
     if (minimalValidCooldownTimestamp > toCooldownTimestamp) {
       toCooldownTimestamp = 0;
     } else {
-      uint256 fromCooldownTimestamp =
-        (minimalValidCooldownTimestamp > fromCooldownTimestamp)
-          ? block.timestamp
-          : fromCooldownTimestamp;
+      uint256 fromCooldownTimestamp = (minimalValidCooldownTimestamp > fromCooldownTimestamp)
+        ? block.timestamp
+        : fromCooldownTimestamp;
 
       if (fromCooldownTimestamp < toCooldownTimestamp) {
         return toCooldownTimestamp;
       } else {
         toCooldownTimestamp = (
           amountToReceive.mul(fromCooldownTimestamp).add(toBalance.mul(toCooldownTimestamp))
-        )
-          .div(amountToReceive.add(toBalance));
+        ).div(amountToReceive.add(toBalance));
       }
     }
     return toCooldownTimestamp;
@@ -1794,8 +1752,8 @@ contract StakedTokenBptRev2 is
    * @return The rewards
    */
   function getTotalRewardsBalance(address staker) external view returns (uint256) {
-    DistributionTypes.UserStakeInput[] memory userStakeInputs =
-      new DistributionTypes.UserStakeInput[](1);
+    DistributionTypes.UserStakeInput[]
+      memory userStakeInputs = new DistributionTypes.UserStakeInput[](1);
     userStakeInputs[0] = DistributionTypes.UserStakeInput({
       underlyingAsset: address(this),
       stakedByUser: balanceOf(staker),
@@ -1836,14 +1794,13 @@ contract StakedTokenBptRev2 is
     //solium-disable-next-line
     require(block.timestamp <= deadline, 'INVALID_EXPIRATION');
     uint256 currentValidNonce = _nonces[owner];
-    bytes32 digest =
-      keccak256(
-        abi.encodePacked(
-          '\x19\x01',
-          DOMAIN_SEPARATOR,
-          keccak256(abi.encode(PERMIT_TYPEHASH, owner, spender, value, currentValidNonce, deadline))
-        )
-      );
+    bytes32 digest = keccak256(
+      abi.encodePacked(
+        '\x19\x01',
+        DOMAIN_SEPARATOR,
+        keccak256(abi.encode(PERMIT_TYPEHASH, owner, spender, value, currentValidNonce, deadline))
+      )
+    );
 
     require(owner == ecrecover(digest, v, r, s), 'INVALID_SIGNATURE');
     _nonces[owner] = currentValidNonce.add(1);
@@ -1859,11 +1816,7 @@ contract StakedTokenBptRev2 is
    * @param to the to address
    * @param amount the amount to transfer
    */
-  function _beforeTokenTransfer(
-    address from,
-    address to,
-    uint256 amount
-  ) internal override {
+  function _beforeTokenTransfer(address from, address to, uint256 amount) internal override {
     address votingFromDelegatee = _votingDelegates[from];
     address votingToDelegatee = _votingDelegates[to];
 
@@ -1898,14 +1851,16 @@ contract StakedTokenBptRev2 is
       DelegationType.PROPOSITION_POWER
     );
 
-    // caching the aave governance address to avoid multiple state loads
-    ITransferHook aaveGovernance = _aaveGovernance;
-    if (aaveGovernance != ITransferHook(0)) {
-      aaveGovernance.onTransfer(from, to, amount);
+    // caching the pegasys governance address to avoid multiple state loads
+    ITransferHook pegasysGovernance = _pegasysGovernance;
+    if (pegasysGovernance != ITransferHook(0)) {
+      pegasysGovernance.onTransfer(from, to, amount);
     }
   }
 
-  function _getDelegationDataByType(DelegationType delegationType)
+  function _getDelegationDataByType(
+    DelegationType delegationType
+  )
     internal
     view
     override
@@ -1945,10 +1900,9 @@ contract StakedTokenBptRev2 is
     bytes32 r,
     bytes32 s
   ) public {
-    bytes32 structHash =
-      keccak256(
-        abi.encode(DELEGATE_BY_TYPE_TYPEHASH, delegatee, uint256(delegationType), nonce, expiry)
-      );
+    bytes32 structHash = keccak256(
+      abi.encode(DELEGATE_BY_TYPE_TYPEHASH, delegatee, uint256(delegationType), nonce, expiry)
+    );
     bytes32 digest = keccak256(abi.encodePacked('\x19\x01', DOMAIN_SEPARATOR, structHash));
     address signatory = ecrecover(digest, v, r, s);
     require(signatory != address(0), 'INVALID_SIGNATURE');

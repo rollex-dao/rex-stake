@@ -2,12 +2,12 @@
 pragma solidity 0.7.5;
 pragma experimental ABIEncoderV2;
 
-import {IAaveIncentivesController} from '../interfaces/IAaveIncentivesController.sol';
+import {IPegasysIncentivesController} from '../interfaces/IPegasysIncentivesController.sol';
 import {DistributionTypes} from '../lib/DistributionTypes.sol';
 import {IAToken} from '../interfaces/IAToken.sol';
 
 contract ATokenMock is IAToken {
-  IAaveIncentivesController public _aic;
+  IPegasysIncentivesController public _aic;
   uint256 internal _userBalance;
   uint256 internal _totalSupply;
 
@@ -19,15 +19,11 @@ contract ATokenMock is IAToken {
   event AssetIndexUpdated(address indexed asset, uint256 index);
   event UserIndexUpdated(address indexed user, address indexed asset, uint256 index);
 
-  constructor(IAaveIncentivesController aic) public {
+  constructor(IPegasysIncentivesController aic) public {
     _aic = aic;
   }
 
-  function handleActionOnAic(
-    address user,
-    uint256 userBalance,
-    uint256 totalSupply
-  ) external {
+  function handleActionOnAic(address user, uint256 userBalance, uint256 totalSupply) external {
     _aic.handleAction(user, userBalance, totalSupply);
   }
 
@@ -36,12 +32,9 @@ contract ATokenMock is IAToken {
     _totalSupply = totalSupply;
   }
 
-  function getScaledUserBalanceAndSupply(address user)
-    external
-    view
-    override
-    returns (uint256, uint256)
-  {
+  function getScaledUserBalanceAndSupply(
+    address user
+  ) external view override returns (uint256, uint256) {
     return (_userBalance, _totalSupply);
   }
 

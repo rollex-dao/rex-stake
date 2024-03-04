@@ -62,41 +62,41 @@ export const deployContract = async <ContractType extends Contract>(
   slug: string = '',
   signer?: Signer
 ): Promise<ContractType> => {
-  const contract = (await (await DRE.ethers.getContractFactory(contractName, signer)).deploy(
-    ...args
-  )) as ContractType;
+  const contract = (await (
+    await DRE.ethers.getContractFactory(contractName, signer)
+  ).deploy(...args)) as ContractType;
 
   await registerContractInJsonDb(<eContractid>`${contractName}${slug ? `-${slug}` : ''}`, contract);
   return contract;
 };
 
 type ContractGetter = { address?: string; slug?: string };
-export const getContractFactory = <ContractType extends Contract>(
-  contractName: eContractid
-) => async (contractGetter?: ContractGetter): Promise<ContractType> => {
-  let deployedContract = '';
-  if (!contractGetter?.address) {
-    try {
-      deployedContract = (
-        await getDb()
-          .get(
-            `${contractName}${contractGetter?.slug ? `-${contractGetter.slug}` : ''}.${
-              DRE.network.name
-            }`
-          )
-          .value()
-      ).address;
-    } catch (e) {
-      throw new Error(
-        `Contract ${contractName} was not deployed on ${DRE.network.name} or not stored in DB`
-      );
+export const getContractFactory =
+  <ContractType extends Contract>(contractName: eContractid) =>
+  async (contractGetter?: ContractGetter): Promise<ContractType> => {
+    let deployedContract = '';
+    if (!contractGetter?.address) {
+      try {
+        deployedContract = (
+          await getDb()
+            .get(
+              `${contractName}${contractGetter?.slug ? `-${contractGetter.slug}` : ''}.${
+                DRE.network.name
+              }`
+            )
+            .value()
+        ).address;
+      } catch (e) {
+        throw new Error(
+          `Contract ${contractName} was not deployed on ${DRE.network.name} or not stored in DB`
+        );
+      }
     }
-  }
-  return (await DRE.ethers.getContractAt(
-    contractName,
-    contractGetter?.address || deployedContract
-  )) as ContractType;
-};
+    return (await DRE.ethers.getContractAt(
+      contractName,
+      contractGetter?.address || deployedContract
+    )) as ContractType;
+  };
 
 const linkBytecode = (artifact: Artifact, libraries: any) => {
   let bytecode = artifact.bytecode;
@@ -128,7 +128,7 @@ export const getContract = async <ContractType extends Contract>(
 
 export const buildPermitParams = (
   chainId: number,
-  aaveToken: tEthereumAddress,
+  psysToken: tEthereumAddress,
   owner: tEthereumAddress,
   spender: tEthereumAddress,
   nonce: number,
@@ -152,10 +152,10 @@ export const buildPermitParams = (
   },
   primaryType: 'Permit' as const,
   domain: {
-    name: 'Staked Aave',
+    name: 'Staked PSYS',
     version: '1',
     chainId: chainId,
-    verifyingContract: aaveToken,
+    verifyingContract: psysToken,
   },
   message: {
     owner,
@@ -168,7 +168,7 @@ export const buildPermitParams = (
 
 export const buildDelegateByTypeParams = (
   chainId: number,
-  aaveToken: tEthereumAddress,
+  psysToken: tEthereumAddress,
   delegatee: tEthereumAddress,
   type: string,
   nonce: string,
@@ -190,10 +190,10 @@ export const buildDelegateByTypeParams = (
   },
   primaryType: 'DelegateByType' as const,
   domain: {
-    name: 'Staked Aave',
+    name: 'Staked PSYS',
     version: '1',
     chainId: chainId,
-    verifyingContract: aaveToken,
+    verifyingContract: psysToken,
   },
   message: {
     delegatee,
@@ -205,7 +205,7 @@ export const buildDelegateByTypeParams = (
 
 export const buildDelegateParams = (
   chainId: number,
-  aaveToken: tEthereumAddress,
+  psysToken: tEthereumAddress,
   delegatee: tEthereumAddress,
   nonce: string,
   expiry: string
@@ -225,10 +225,10 @@ export const buildDelegateParams = (
   },
   primaryType: 'Delegate' as const,
   domain: {
-    name: 'Staked Aave',
+    name: 'Staked PSYS',
     version: '1',
     chainId: chainId,
-    verifyingContract: aaveToken,
+    verifyingContract: psysToken,
   },
   message: {
     delegatee,
