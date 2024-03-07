@@ -1,7 +1,7 @@
 {
-  "name": "@aave/safety-module",
-  "version": "1.0.3",
-  "description": "Safety Module for the Aave Protocol",
+  "name": "@pollum-io/pegasys-stake",
+  "version": "0.0.1",
+  "description": "Pegasys Stake",
   "files": [
     "contracts",
     "artifacts"
