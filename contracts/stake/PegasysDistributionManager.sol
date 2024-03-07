@@ -9,7 +9,7 @@ import {IPegasysDistributionManager} from '../interfaces/IPegasysDistributionMan
 /**
  * @title PegasysDistributionManager
  * @notice Accounting contract to manage multiple staking distributions
- * @author
+ * @author Pegasys team
  **/
 contract PegasysDistributionManager is IPegasysDistributionManager {
   using SafeMath for uint256;

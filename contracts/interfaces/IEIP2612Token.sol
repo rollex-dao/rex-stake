@@ -5,7 +5,7 @@ import {IERC20} from './IERC20.sol';
 
 /**
  * @title interface EIP2612
- * @author
+ * @author Pegasys team
  * @dev Generic interface for the EIP2612 permit function
  */
 interface IEIP2612Token is IERC20 {

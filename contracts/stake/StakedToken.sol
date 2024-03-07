@@ -15,7 +15,7 @@ import {SafeMath} from '../lib/SafeMath.sol';
 /**
  * @title StakedToken
  * @notice Contract to stake PSYS token, tokenize the position and get rewards, inheriting from a distribution manager contract
- * @author
+ * @author Pegasys team
  **/
 contract StakedToken is
   IStakedPSYS,

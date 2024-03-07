@@ -1,5 +1,5 @@
-import '@aave/protocol-v2/contracts/interfaces/ILendingPool.sol';
-import '@aave/protocol-v2/contracts/interfaces/ILendingPoolAddressesProvider.sol';
-import '@aave/protocol-v2/contracts/dependencies/openzeppelin/contracts/IERC20.sol';
-import '@aave/protocol-v2/contracts/dependencies/openzeppelin/contracts/IERC20.sol';
-import '@aave/protocol-v2/contracts/misc/AaveProtocolDataProvider.sol';
+import '@pollum-io/pegasys-lending/contracts/interfaces/ILendingPool.sol';
+import '@pollum-io/pegasys-lending/contracts/interfaces/ILendingPoolAddressesProvider.sol';
+import '@pollum-io/pegasys-lending/contracts/dependencies/openzeppelin/contracts/IERC20.sol';
+import '@pollum-io/pegasys-lending/contracts/dependencies/openzeppelin/contracts/IERC20.sol';
+import '@pollum-io/pegasys-lending/contracts/misc/PegasysProtocolDataProvider.sol';
