@@ -6,7 +6,7 @@ import {IEIP2612Token} from '../interfaces/IEIP2612Token.sol';
 
 /**
  * @title StakingHelper contract
- * @author
+ * @author Pegasys team
  * @dev implements a staking function that allows staking through the EIP2612 capabilities of the PSYS token
  **/
 

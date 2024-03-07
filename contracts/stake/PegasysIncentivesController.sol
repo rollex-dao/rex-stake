@@ -15,7 +15,7 @@ import {PegasysDistributionManager} from './PegasysDistributionManager.sol';
 /**
  * @title PegasysIncentivesController
  * @notice Distributor contract for rewards to the Pegasys protocol
- * @author
+ * @author Pegasys team
  **/
 contract PegasysIncentivesController is
   IPegasysIncentivesController,

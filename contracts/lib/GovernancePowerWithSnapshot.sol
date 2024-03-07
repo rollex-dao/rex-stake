@@ -9,7 +9,7 @@ import {GovernancePowerDelegationERC20} from '@aave/aave-token/contracts/token/b
 /**
  * @title ERC20WithSnapshot
  * @notice ERC20 including snapshots of balances on transfer-related actions
- * @author
+ * @author Pegasys team
  **/
 abstract contract GovernancePowerWithSnapshot is GovernancePowerDelegationERC20 {
   using SafeMath for uint256;

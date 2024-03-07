@@ -792,7 +792,7 @@ library SafeERC20 {
  * a parent initializer twice, or ensure that all initializers are idempotent,
  * because this is not dealt with automatically as with constructors.
  *
- * @author , inspired by the OpenZeppelin Initializable contract
+ * @author Pegasys team  , inspired by the OpenZeppelin Initializable contract
  */
 abstract contract VersionedInitializable {
   /**
@@ -829,7 +829,7 @@ interface IPegasysDistributionManager {
 /**
  * @title PegasysDistributionManager
  * @notice Accounting contract to manage multiple staking distributions
- * @author
+ * @author Pegasys team
  **/
 contract PegasysDistributionManager is IPegasysDistributionManager {
   using SafeMath for uint256;
@@ -1068,7 +1068,7 @@ contract PegasysDistributionManager is IPegasysDistributionManager {
 
 /**
  * @notice implementation of the PSYS token contract
- * @author
+ * @author Pegasys team
  */
 abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDelegationToken {
   using SafeMath for uint256;
@@ -1369,7 +1369,7 @@ abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDeleg
 /**
  * @title ERC20WithSnapshot
  * @notice ERC20 including snapshots of balances on transfer-related actions
- * @author
+ * @author Pegasys team
  **/
 abstract contract GovernancePowerWithSnapshot is GovernancePowerDelegationERC20 {
   using SafeMath for uint256;
@@ -1396,7 +1396,7 @@ abstract contract GovernancePowerWithSnapshot is GovernancePowerDelegationERC20 
 /**
  * @title StakedToken
  * @notice Contract to stake PSYS token, tokenize the position and get rewards, inheriting from a distribution manager contract
- * @author
+ * @author Pegasys team
  **/
 contract StakedTokenV2Rev3 is
   IStakedPSYS,

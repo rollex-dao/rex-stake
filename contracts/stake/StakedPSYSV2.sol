@@ -8,7 +8,7 @@ import {StakedTokenV2} from './StakedTokenV2.sol';
 /**
  * @title StakedPSYSV2
  * @notice StakedTokenV2 with PSYS token as staked token
- * @author
+ * @author Pegasys team
  **/
 contract StakedPSYSV2 is StakedTokenV2 {
   string internal constant NAME = 'Staked PSYS';

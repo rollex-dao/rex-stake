@@ -19,7 +19,7 @@ import {GovernancePowerWithSnapshot} from '../lib/GovernancePowerWithSnapshot.so
 /**
  * @title StakedToken
  * @notice Contract to stake PSYS token, tokenize the position and get rewards, inheriting from a distribution manager contract
- * @author
+ * @author Pegasys team
  **/
 contract StakedTokenV2 is
   IStakedPSYS,

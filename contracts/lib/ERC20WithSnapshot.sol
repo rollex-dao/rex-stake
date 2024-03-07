@@ -8,7 +8,7 @@ import {SafeMath} from '../lib/SafeMath.sol';
 /**
  * @title ERC20WithSnapshot
  * @notice ERC20 including snapshots of balances on transfer-related actions
- * @author
+ * @author Pegasys team
  **/
 contract ERC20WithSnapshot is ERC20 {
   using SafeMath for uint256;
