@@ -20,7 +20,7 @@ task('proposal-vault-approval', 'Create some proposals and votes')
       PSYS_TOKEN = '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9',
       PSYS_GOVERNANCE_V2 = '0xEC568fffba86c094cf06b22134B23074DFE2252c',
       REWARDS_CONTROLLER = '0x1E506cbb6721B83B1549fa1558332381Ffa61A93',
-      PSYS_SHORT_EXECUTOR = '0xEE56e2B3D491590B5b31738cC34d5232F378a8D5',
+      SHORT_EXECUTOR = '0xEE56e2B3D491590B5b31738cC34d5232F378a8D5',
       PSYS_STAKE = '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
       STK_BPT_STAKE = '0xa1116930326D21fB917d5A27F1E9943A9595fb47',
     } = process.env;
@@ -29,7 +29,7 @@ task('proposal-vault-approval', 'Create some proposals and votes')
       psysProxy: PSYS_TOKEN,
       pegasysGovernance: PSYS_GOVERNANCE_V2,
       rewardsVaultController: REWARDS_CONTROLLER,
-      shortExecutor: PSYS_SHORT_EXECUTOR,
+      shortExecutor: SHORT_EXECUTOR,
       stkPSYSProxy: PSYS_STAKE,
       stkBptProxy: STK_BPT_STAKE,
       ipfsHash,

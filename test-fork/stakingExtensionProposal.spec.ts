@@ -36,7 +36,7 @@ const {
   PSYS_TOKEN = '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9',
   IPFS_HASH = 'QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6', // WIP
   PSYS_GOVERNANCE_V2 = '0xEC568fffba86c094cf06b22134B23074DFE2252c', // mainnet
-  PSYS_LONG_EXECUTOR = '0x61910ecd7e8e942136ce7fe7943f956cea1cc2f7', // mainnet
+  LONG_EXECUTOR = '0x61910ecd7e8e942136ce7fe7943f956cea1cc2f7', // mainnet
 } = process.env;
 
 if (
@@ -47,7 +47,7 @@ if (
   !PSYS_TOKEN ||
   !IPFS_HASH ||
   !PSYS_GOVERNANCE_V2 ||
-  !PSYS_LONG_EXECUTOR
+  !LONG_EXECUTOR
 ) {
   throw new Error('You have not set correctly the .env file, make sure to read the README.md');
 }

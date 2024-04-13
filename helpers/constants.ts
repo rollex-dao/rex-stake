@@ -13,19 +13,20 @@ export const STAKED_PSYS_NAME = 'Staked PSYS';
 export const STAKED_PSYS_SYMBOL = 'stkPSYS';
 export const STAKED_PSYS_DECIMALS = 18;
 
-export const PSYS_GOVERNANCE_V2 = '0xEC568fffba86c094cf06b22134B23074DFE2252c';
-export const UPGRADABLE_CRP_FACTORY = '0x1156C30b08DbF16281c803EAe0d52Eee7652f10C';
-export const PSYS_TOKEN = '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9';
-export const WETH = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
-export const REWARDS_VAULT = '0x25f2226b597e8f9514b3f68f00f494cf4f286491';
-export const BPOOL_FACTORY = '0x9424B1412450D0f8Fc2255FAf6046b98213B76Bd';
+export const PSYS_GOVERNANCE_V2 = '0xa478dB4f7A6Cb46986d107A8e61410eECf451ae2';
+export const PSYS_TOKEN = '0x48023b16c3e81AA7F6eFFbdEB35Bb83f4f31a8fd';
+export const WETH = '0x4200000000000000000000000000000000000006';
+export const REWARDS_VAULT = '0xE569dFa7c8C7DAdF41314718cE732538968366A6'; //AaveEcossystemReserveV2 as Proxy
 
-export const CRP_IMPLEMENTATION = '0xadc74a134082ea85105258407159fbb428a73782';
-export const SHORT_EXECUTOR = '0xee56e2b3d491590b5b31738cc34d5232f378a8d5';
-export const LONG_EXECUTOR = '0x61910EcD7e8e942136CE7Fe7943f956cea1CC2f7';
-export const PROXY_CRP_ADMIN = SHORT_EXECUTOR;
-export const RESERVE_CONTROLER = '0x1E506cbb6721B83B1549fa1558332381Ffa61A93';
+export const LONG_EXECUTOR = '0xAeB50343c57a3654D11E41CBeF245B2918Fa2cc9';
+export const SHORT_EXECUTOR = LONG_EXECUTOR;
 export const ZERO_ADDRESS: tEthereumAddress = '0x0000000000000000000000000000000000000000';
+
+// export const CRP_IMPLEMENTATION = '0xadc74a134082ea85105258407159fbb428a73782'; // BALANCER POOL
+// export const BPOOL_FACTORY = '0x9424B1412450D0f8Fc2255FAf6046b98213B76Bd'; // BALANCER POOL
+// export const UPGRADABLE_CRP_FACTORY = '0x1156C30b08DbF16281c803EAe0d52Eee7652f10C'; // ADDS BALANCER TOKEN SUPPORT
+// export const PROXY_CRP_ADMIN = SHORT_EXECUTOR; // BALANCER POOL
+// export const RESERVE_CONTROLER = '0x1E506cbb6721B83B1549fa1558332381Ffa61A93'; // BALANCER POOL
 
 // PEI constants
 export const PSM_STAKER_PREMIUM = '2';
@@ -49,12 +50,8 @@ export const RANDOM_ADDRESSES = [
 export const getPSYStokenPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
   getParamPerNetwork<tEthereumAddress>(
     {
-      [eEthereumNetwork.coverage]: ZERO_ADDRESS,
       [eEthereumNetwork.hardhat]: ZERO_ADDRESS,
-      [eEthereumNetwork.kovan]: '0xe4483afcf0d612c011679C76B61F5b0d27bAF93C',
-      [eEthereumNetwork.goerli]: '0x8153a21dfeb1f67024aa6c6e611432900ff3dcb9',
-      [eEthereumNetwork.ropsten]: '0x74dA004A1B81b4d0C79F5820f9FF22647cb1dD95',
-      [eEthereumNetwork.main]: '0x9c0435779F5E52CEC404D957C9bAa6f7d674C8bA',
+      [eEthereumNetwork.main]: '0x48023b16c3e81AA7F6eFFbdEB35Bb83f4f31a8fd',
     },
     network
   );
@@ -62,11 +59,7 @@ export const getPSYStokenPerNetwork = (network: eEthereumNetwork): tEthereumAddr
 export const getCooldownSecondsPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
   getParamPerNetwork<string>(
     {
-      [eEthereumNetwork.coverage]: COOLDOWN_SECONDS,
       [eEthereumNetwork.hardhat]: COOLDOWN_SECONDS,
-      [eEthereumNetwork.kovan]: '21600', // 6h
-      [eEthereumNetwork.goerli]: '180', // 3min
-      [eEthereumNetwork.ropsten]: '180', // 3min
       [eEthereumNetwork.main]: '864000', // 10d
     },
     network
@@ -75,11 +68,7 @@ export const getCooldownSecondsPerNetwork = (network: eEthereumNetwork): tEthere
 export const getUnstakeWindowPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
   getParamPerNetwork<string>(
     {
-      [eEthereumNetwork.coverage]: UNSTAKE_WINDOW,
       [eEthereumNetwork.hardhat]: UNSTAKE_WINDOW,
-      [eEthereumNetwork.kovan]: '10800', // 3h
-      [eEthereumNetwork.goerli]: '240', // 4min
-      [eEthereumNetwork.ropsten]: '240', // 4m
       [eEthereumNetwork.main]: '172800', // 2d
     },
     network
@@ -88,12 +77,8 @@ export const getUnstakeWindowPerNetwork = (network: eEthereumNetwork): tEthereum
 export const getPegasysAdminPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
   getParamPerNetwork<tEthereumAddress>(
     {
-      [eEthereumNetwork.coverage]: ZERO_ADDRESS,
       [eEthereumNetwork.hardhat]: ZERO_ADDRESS,
-      [eEthereumNetwork.kovan]: '0x8134929c3dcb1b8b82f27f53424b959fb82182f2', // Pegasys Governance
-      [eEthereumNetwork.goerli]: ZERO_ADDRESS,
-      [eEthereumNetwork.ropsten]: '0xEd93e49A2d75beA505fD4D1A0Dff745f69F2E997', // Pegasys Governance
-      [eEthereumNetwork.main]: '0x8a2Efd9A790199F4c94c6effE210fce0B4724f52', // Pegasys Governance
+      [eEthereumNetwork.main]: PSYS_GOVERNANCE_V2, // Pegasys Governance
     },
     network
   );
@@ -101,11 +86,7 @@ export const getPegasysAdminPerNetwork = (network: eEthereumNetwork): tEthereumA
 export const getDistributionDurationPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
   getParamPerNetwork<tEthereumAddress>(
     {
-      [eEthereumNetwork.coverage]: DISTRIBUTION_DURATION,
       [eEthereumNetwork.hardhat]: DISTRIBUTION_DURATION,
-      [eEthereumNetwork.kovan]: '864000',
-      [eEthereumNetwork.goerli]: '864000',
-      [eEthereumNetwork.ropsten]: '864000',
       [eEthereumNetwork.main]: '12960000', // 5 months (30 days) in seconds
     },
     network
@@ -114,11 +95,7 @@ export const getDistributionDurationPerNetwork = (network: eEthereumNetwork): tE
 export const getPegasysIncentivesVaultPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
   getParamPerNetwork<tEthereumAddress>(
     {
-      [eEthereumNetwork.coverage]: ZERO_ADDRESS,
       [eEthereumNetwork.hardhat]: ZERO_ADDRESS,
-      [eEthereumNetwork.kovan]: ZERO_ADDRESS,
-      [eEthereumNetwork.goerli]: ZERO_ADDRESS,
-      [eEthereumNetwork.ropsten]: ZERO_ADDRESS,
       [eEthereumNetwork.main]: '0x253f7b06c1d60c1fbbc9d82c301327eb86e3ba81',
     },
     network
