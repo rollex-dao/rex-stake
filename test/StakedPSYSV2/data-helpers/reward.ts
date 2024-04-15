@@ -11,7 +11,7 @@ import { getUserIndex } from '../../DistributionManager/data-helpers/asset-user-
 import { eventChecker } from '../../helpers/comparator-engine';
 import { waitForTx, increaseTime } from '../../../helpers/misc-utils';
 import { SignerWithAddress } from '../../helpers/make-suite';
-import { StakedPSYSV2 } from '../../../types/StakedPSYSV2';
+import { StakedPSYSV3 } from '../../../types/StakedPSYSV3';
 import { solidity } from 'ethereum-waffle';
 
 chai.use(solidity);
@@ -22,18 +22,18 @@ type AssetConfig = {
 };
 
 export const compareRewardsAtAction = async (
-  StakedPSYSV2: StakedPSYSV2,
+  StakedPSYSV3: StakedPSYSV3,
   userAddress: string,
   actions: () => Promise<ContractTransaction>[],
   shouldReward?: boolean,
   assetConfig?: AssetConfig
 ): Promise<void> => {
-  const underlyingAsset = StakedPSYSV2.address;
+  const underlyingAsset = StakedPSYSV3.address;
   // To prevent coverage to fail, add 5 seconds per comparisson.
   await increaseTime(5);
 
   const rewardsBalanceBefore = BigNumber.from(
-    await (await StakedPSYSV2.getTotalRewardsBalance(userAddress)).toString()
+    await (await StakedPSYSV3.getTotalRewardsBalance(userAddress)).toString()
   );
 
   // Configure assets of stake token
@@ -44,25 +44,25 @@ export const compareRewardsAtAction = async (
       }
     : {
         emissionPerSecond: '100',
-        totalStaked: await StakedPSYSV2.totalSupply(),
+        totalStaked: await StakedPSYSV3.totalSupply(),
         underlyingAsset,
       };
-  await StakedPSYSV2.configureAssets([assetConfiguration]);
+  await StakedPSYSV3.configureAssets([assetConfiguration]);
 
-  const userBalance = await StakedPSYSV2.balanceOf(userAddress);
+  const userBalance = await StakedPSYSV3.balanceOf(userAddress);
   // Get index before actions
-  const userIndexBefore = await getUserIndex(StakedPSYSV2, userAddress, underlyingAsset);
+  const userIndexBefore = await getUserIndex(StakedPSYSV3, userAddress, underlyingAsset);
 
   // Dispatch actions that can or not update the user index
   const receipts: ethers.ContractReceipt[] = await Promise.all(
     await actions().map(async (action) => waitForTx(await action))
   );
   // Get index after actions
-  const userIndexAfter = await getUserIndex(StakedPSYSV2, userAddress, underlyingAsset);
+  const userIndexAfter = await getUserIndex(StakedPSYSV3, userAddress, underlyingAsset);
 
   // Compare calculated JS rewards versus Solidity user rewards
   const rewardsBalanceAfter = BigNumber.from(
-    await (await StakedPSYSV2.getTotalRewardsBalance(userAddress)).toString()
+    await (await StakedPSYSV3.getTotalRewardsBalance(userAddress)).toString()
   );
   const expectedAccruedRewards = getRewards(userBalance, userIndexAfter, userIndexBefore);
 
@@ -92,7 +92,7 @@ export const compareRewardsAtAction = async (
 };
 
 export const compareRewardsAtTransfer = async (
-  StakedPSYSV2: StakedPSYSV2,
+  StakedPSYSV3: StakedPSYSV3,
   from: SignerWithAddress,
   to: SignerWithAddress,
   amount: BigNumberish,
@@ -105,41 +105,41 @@ export const compareRewardsAtTransfer = async (
 
   const fromAddress = from.address;
   const toAddress = to.address;
-  const underlyingAsset = StakedPSYSV2.address;
-  const fromSavedBalance = await StakedPSYSV2.balanceOf(fromAddress);
-  const toSavedBalance = await StakedPSYSV2.balanceOf(toAddress);
+  const underlyingAsset = StakedPSYSV3.address;
+  const fromSavedBalance = await StakedPSYSV3.balanceOf(fromAddress);
+  const toSavedBalance = await StakedPSYSV3.balanceOf(toAddress);
   const fromSavedRewards = BigNumber.from(
-    await (await StakedPSYSV2.getTotalRewardsBalance(fromAddress)).toString()
+    await (await StakedPSYSV3.getTotalRewardsBalance(fromAddress)).toString()
   );
   const toSavedRewards = BigNumber.from(
-    await (await StakedPSYSV2.getTotalRewardsBalance(toAddress)).toString()
+    await (await StakedPSYSV3.getTotalRewardsBalance(toAddress)).toString()
   );
   // Get index before actions
-  const fromIndexBefore = await getUserIndex(StakedPSYSV2, fromAddress, underlyingAsset);
-  const toIndexBefore = await getUserIndex(StakedPSYSV2, toAddress, underlyingAsset);
+  const fromIndexBefore = await getUserIndex(StakedPSYSV3, fromAddress, underlyingAsset);
+  const toIndexBefore = await getUserIndex(StakedPSYSV3, toAddress, underlyingAsset);
 
   // Load actions that can or not update the user index
-  const actions = () => [StakedPSYSV2.connect(from.signer).transfer(toAddress, amount)];
+  const actions = () => [StakedPSYSV3.connect(from.signer).transfer(toAddress, amount)];
 
   // Fire reward comparator
-  await compareRewardsAtAction(StakedPSYSV2, fromAddress, actions, fromShouldReward, assetConfig);
+  await compareRewardsAtAction(StakedPSYSV3, fromAddress, actions, fromShouldReward, assetConfig);
 
   // Check rewards after transfer
 
   // Get index after actions
-  const fromIndexAfter = await getUserIndex(StakedPSYSV2, fromAddress, underlyingAsset);
-  const toIndexAfter = await getUserIndex(StakedPSYSV2, toAddress, underlyingAsset);
+  const fromIndexAfter = await getUserIndex(StakedPSYSV3, fromAddress, underlyingAsset);
+  const toIndexAfter = await getUserIndex(StakedPSYSV3, toAddress, underlyingAsset);
 
   // FROM: Compare calculated JS rewards versus Solidity user rewards
   const fromRewardsBalanceAfter = BigNumber.from(
-    await (await StakedPSYSV2.getTotalRewardsBalance(fromAddress)).toString()
+    await (await StakedPSYSV3.getTotalRewardsBalance(fromAddress)).toString()
   );
   const fromExpectedAccruedRewards = getRewards(fromSavedBalance, fromIndexAfter, fromIndexBefore);
   expect(fromRewardsBalanceAfter).to.bignumber.eq(fromSavedRewards.add(fromExpectedAccruedRewards));
 
   // TO: Compare calculated JS rewards versus Solidity user rewards
   const toRewardsBalanceAfter = BigNumber.from(
-    await (await StakedPSYSV2.getTotalRewardsBalance(toAddress)).toString()
+    await (await StakedPSYSV3.getTotalRewardsBalance(toAddress)).toString()
   );
   const toExpectedAccruedRewards = getRewards(toSavedBalance, toIndexAfter, toIndexBefore);
   expect(toRewardsBalanceAfter).to.bignumber.eq(toSavedRewards.add(toExpectedAccruedRewards));
@@ -162,8 +162,8 @@ export const compareRewardsAtTransfer = async (
   if (fromAddress === toAddress) {
     expect(fromSavedBalance.toString()).to.be.equal(toSavedBalance.toString());
   } else {
-    const fromNewBalance = await (await StakedPSYSV2.balanceOf(fromAddress)).toString();
-    const toNewBalance = await (await StakedPSYSV2.balanceOf(toAddress)).toString();
+    const fromNewBalance = await (await StakedPSYSV3.balanceOf(fromAddress)).toString();
+    const toNewBalance = await (await StakedPSYSV3.balanceOf(toAddress)).toString();
     expect(fromNewBalance).to.be.equal(fromSavedBalance.sub(amount).toString());
     expect(toNewBalance).to.be.equal(toSavedBalance.add(amount).toString());
   }

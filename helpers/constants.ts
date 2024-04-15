@@ -13,12 +13,11 @@ export const STAKED_PSYS_NAME = 'Staked PSYS';
 export const STAKED_PSYS_SYMBOL = 'stkPSYS';
 export const STAKED_PSYS_DECIMALS = 18;
 
-export const PSYS_GOVERNANCE_V2 = '0xa478dB4f7A6Cb46986d107A8e61410eECf451ae2';
+export const PSYS_GOVERNANCE_V2 = '0x4894A8900D0fDB4DAAFA80383F212f03E1d0f351';
 export const PSYS_TOKEN = '0x48023b16c3e81AA7F6eFFbdEB35Bb83f4f31a8fd';
 export const WETH = '0x4200000000000000000000000000000000000006';
-export const REWARDS_VAULT = '0xE569dFa7c8C7DAdF41314718cE732538968366A6'; //AaveEcossystemReserveV2 as Proxy
-
-export const LONG_EXECUTOR = '0xAeB50343c57a3654D11E41CBeF245B2918Fa2cc9';
+export const REWARDS_VAULT = '0x0460cC46f1703EE6A014a136354D8707cBD75f14'; //AaveEcossystemReserveV2 as Proxy
+export const LONG_EXECUTOR = '0xEC2d95Fa98F69401648484A6584AeE6de586b65c';
 export const SHORT_EXECUTOR = LONG_EXECUTOR;
 export const ZERO_ADDRESS: tEthereumAddress = '0x0000000000000000000000000000000000000000';
 
@@ -51,7 +50,7 @@ export const getPSYStokenPerNetwork = (network: eEthereumNetwork): tEthereumAddr
   getParamPerNetwork<tEthereumAddress>(
     {
       [eEthereumNetwork.hardhat]: ZERO_ADDRESS,
-      [eEthereumNetwork.main]: '0x48023b16c3e81AA7F6eFFbdEB35Bb83f4f31a8fd',
+      [eEthereumNetwork.main]: PSYS_TOKEN,
     },
     network
   );
@@ -78,7 +77,7 @@ export const getPegasysAdminPerNetwork = (network: eEthereumNetwork): tEthereumA
   getParamPerNetwork<tEthereumAddress>(
     {
       [eEthereumNetwork.hardhat]: ZERO_ADDRESS,
-      [eEthereumNetwork.main]: PSYS_GOVERNANCE_V2, // Pegasys Governance
+      [eEthereumNetwork.main]: LONG_EXECUTOR, // Executor used for Emission management
     },
     network
   );
@@ -96,7 +95,7 @@ export const getPegasysIncentivesVaultPerNetwork = (network: eEthereumNetwork): 
   getParamPerNetwork<tEthereumAddress>(
     {
       [eEthereumNetwork.hardhat]: ZERO_ADDRESS,
-      [eEthereumNetwork.main]: '0x253f7b06c1d60c1fbbc9d82c301327eb86e3ba81',
+      [eEthereumNetwork.main]: REWARDS_VAULT,
     },
     network
   );

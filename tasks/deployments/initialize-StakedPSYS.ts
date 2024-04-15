@@ -8,21 +8,21 @@ import {
   STAKED_PSYS_DECIMALS,
 } from '../../helpers/constants';
 import {
-  getStakedPSYS,
+  getStakedPSYSV3,
   getStakedPSYSImpl,
   getStakedPSYSProxy,
 } from '../../helpers/contracts-accessors';
 
-const { StakedPSYS } = eContractid;
+const { StakedPSYSV3 } = eContractid;
 
-task(`initialize-${StakedPSYS}`, `Initialize the ${StakedPSYS} proxy contract`)
-  .addParam('admin', `The address to be added as an Admin role in ${StakedPSYS} Transparent Proxy.`)
+task(`initialize-${StakedPSYSV3}`, `Initialize the ${StakedPSYSV3} proxy contract`)
+  .addParam('admin', `The address to be added as an Admin role in ${StakedPSYSV3} Transparent Proxy.`)
   .setAction(async ({ admin: pegasysAdmin }, localBRE) => {
     await localBRE.run('set-dre');
 
     if (!pegasysAdmin) {
       throw new Error(
-        `Missing --admin parameter to add the Admin Role to ${StakedPSYS} Transparent Proxy`
+        `Missing --admin parameter to add the Admin Role to ${StakedPSYSV3} Transparent Proxy`
       );
     }
 
@@ -30,14 +30,14 @@ task(`initialize-${StakedPSYS}`, `Initialize the ${StakedPSYS} proxy contract`)
       throw new Error('INVALID_CHAIN_ID');
     }
 
-    console.log(`\n- ${StakedPSYS} initialization`);
+    console.log(`\n- ${StakedPSYSV3} initialization`);
 
-    const StakedPSYSImpl = await getStakedPSYSImpl();
-    const StakedPSYSProxy = await getStakedPSYSProxy();
+    const StakedPSYSV3Impl = await getStakedPSYSImpl();
+    const StakedPSYSV3Proxy = await getStakedPSYSProxy();
 
-    console.log('\tInitializing StakedPSYS');
+    console.log('\tInitializing StakedPSYSV3');
 
-    const encodedInitializeStakedPSYS = StakedPSYSImpl.interface.encodeFunctionData('initialize', [
+    const encodedInitializeStakedPSYSV3 = StakedPSYSV3Impl.interface.encodeFunctionData('initialize', [
       ZERO_ADDRESS,
       STAKED_PSYS_NAME,
       STAKED_PSYS_SYMBOL,
@@ -45,10 +45,10 @@ task(`initialize-${StakedPSYS}`, `Initialize the ${StakedPSYS} proxy contract`)
     ]);
 
     await waitForTx(
-      await StakedPSYSProxy.functions['initialize(address,address,bytes)'](
-        StakedPSYSImpl.address,
+      await StakedPSYSV3Proxy.functions['initialize(address,address,bytes)'](
+        StakedPSYSV3Impl.address,
         pegasysAdmin,
-        encodedInitializeStakedPSYS
+        encodedInitializeStakedPSYSV3
       )
     );
 

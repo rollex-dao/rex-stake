@@ -13,7 +13,7 @@ import {
   deployPegasysIncentivesController,
   deployStakedPSYS,
   deployMockTransferHook,
-  deployStakedPSYSV2,
+  deployStakedPSYSV3,
 } from '../../helpers/contracts-accessors';
 import { insertContractAddressInDb } from '../../helpers/contracts-helpers';
 import { waitForTx } from '../../helpers/misc-utils';
@@ -115,7 +115,7 @@ export const testDeploypsysStakeV2 = async (
     restWallets
   );
 
-  const StakedPSYSImpl = await deployStakedPSYSV2([
+  const StakedPSYSImpl = await deployStakedPSYSV3([
     stakedToken,
     rewardsToken,
     COOLDOWN_SECONDS,
@@ -132,7 +132,7 @@ export const testDeploypsysStakeV2 = async (
     StakedPSYSEncodedInitialize
   );
 
-  await insertContractAddressInDb(eContractid.StakedPSYSV2, StakedPSYSProxy.address);
+  await insertContractAddressInDb(eContractid.StakedPSYSV3, StakedPSYSProxy.address);
 
   return {
     StakedPSYSProxy,

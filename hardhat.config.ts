@@ -71,7 +71,7 @@ const config: HardhatUserConfig = {
       }
     ]
   },
-  defaultNetwork: 'hardhat',
+  defaultNetwork: 'main',
   mocha: {
     timeout: 0,
   },

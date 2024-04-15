@@ -1,6 +1,6 @@
 import { Signer } from 'ethers';
 import { task } from 'hardhat/config';
-import { deployStakedTokenV2Revision3 } from '../../helpers/contracts-accessors';
+import { deployStakedTokenV3Revision3 } from '../../helpers/contracts-accessors';
 import { getDefenderRelaySigner } from '../../helpers/defender-utils';
 import { DRE } from '../../helpers/misc-utils';
 
@@ -19,7 +19,7 @@ task('deploy-staked-psys-rev3', 'Deploy implementation')
     }
 
     // Deploy stkPSYS V2 Revision 3 implementation
-    const StakedPSYSV2Revision3Implementation = await deployStakedTokenV2Revision3(
+    const StakedPSYSV3Revision3Implementation = await deployStakedTokenV3Revision3(
       [
         '0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9',
         '0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9',
@@ -37,5 +37,5 @@ task('deploy-staked-psys-rev3', 'Deploy implementation')
       deployer
     );
 
-    return StakedPSYSV2Revision3Implementation.address;
+    return StakedPSYSV3Revision3Implementation.address;
   });

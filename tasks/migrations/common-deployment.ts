@@ -6,7 +6,7 @@ import { checkVerification } from '../../helpers/etherscan-verification';
 import { getPegasysAdminPerNetwork } from '../../helpers/constants';
 
 task('common-deployment', 'Deployment in for Main, Kovan and Ropsten networks')
-  .addFlag('verify', 'Verify StakedPSYS and InitializableAdminUpgradeabilityProxy contract.')
+  .addFlag('verify', 'Verify StakedPSYSV3 and InitializableAdminUpgradeabilityProxy contract.')
   .addOptionalParam(
     'vaultAddress',
     'Use PegasysIncentivesVault address by param instead of configuration.'
@@ -28,9 +28,9 @@ task('common-deployment', 'Deployment in for Main, Kovan and Ropsten networks')
       checkVerification();
     }
 
-    await DRE.run(`deploy-${eContractid.StakedPSYS}`, { verify, vaultAddress, psysAddress });
+    await DRE.run(`deploy-${eContractid.StakedPSYSV3}`, { verify, vaultAddress, psysAddress });
 
-    await DRE.run(`initialize-${eContractid.StakedPSYS}`, {
+    await DRE.run(`initialize-${eContractid.StakedPSYSV3}`, {
       admin: pegasysAdmin,
     });
 

@@ -13,28 +13,28 @@ export const logPSYStokenBalanceOf = async (
 
 export const logStakedPSYSBalanceOf = async (
   staker: tEthereumAddress,
-  StakedPSYSV2: StakedPSYS
+  StakedPSYSV3: StakedPSYS
 ) => {
   console.log(
-    `[StakedPSYSV2.balanceOf(${staker})]: ${(await StakedPSYSV2.balanceOf(staker)).toString()}`
+    `[StakedPSYSV3.balanceOf(${staker})]: ${(await StakedPSYSV3.balanceOf(staker)).toString()}`
   );
 };
 
 export const logGetStakeTotalRewardsBalance = async (
   staker: tEthereumAddress,
-  StakedPSYSV2: StakedPSYS
+  StakedPSYSV3: StakedPSYS
 ) => {
   console.log(
-    `[StakedPSYSV2.getTotalRewardsBalance(${staker})]: ${(
-      await StakedPSYSV2.getTotalRewardsBalance(staker)
+    `[StakedPSYSV3.getTotalRewardsBalance(${staker})]: ${(
+      await StakedPSYSV3.getTotalRewardsBalance(staker)
     ).toString()}`
   );
 };
 
-export const logRewardPerStakedPSYS = async (StakedPSYSV2: StakedPSYS) => {
+export const logRewardPerStakedPSYS = async (StakedPSYSV3: StakedPSYS) => {
   console.log(
-    `[StakedPSYSV2.getRewardPerStakedPSYS()]: ${(
-      await StakedPSYSV2.getRewardPerStakedPSYS()
+    `[StakedPSYSV3.getRewardPerStakedPSYS()]: ${(
+      await StakedPSYSV3.getRewardPerStakedPSYS()
     ).toString()}`
   );
 };

@@ -1398,7 +1398,7 @@ abstract contract GovernancePowerWithSnapshot is GovernancePowerDelegationERC20 
  * @notice Contract to stake PSYS token, tokenize the position and get rewards, inheriting from a distribution manager contract
  * @author Pegasys team
  **/
-contract StakedTokenV2Rev3 is
+contract StakedTokenV3Rev3 is
   IStakedPSYS,
   GovernancePowerWithSnapshot,
   VersionedInitializable,

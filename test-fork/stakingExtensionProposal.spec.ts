@@ -15,15 +15,15 @@ import { MAX_UINT_AMOUNT } from '../helpers/constants';
 import { IPegasysGovernanceV2 } from '../types/IPegasysGovernanceV2';
 import { ILendingPool } from '../types/ILendingPool';
 import {
-  StakedPSYSV2,
-  StakedPSYSV2__factory,
+  StakedPSYSV3,
+  StakedPSYSV3__factory,
   Erc20,
   SelfdestructTransfer__factory,
   Erc20__factory,
   IDelegationAwareToken__factory,
-  StakedTokenV2Rev3,
+  StakedTokenV3Rev3,
   StakedTokenBptRev2,
-  StakedTokenV2Rev3__factory,
+  StakedTokenV3Rev3__factory,
   StakedTokenBptRev2__factory,
 } from '../types';
 import { spendList } from './helpers';
@@ -78,11 +78,11 @@ describe('Proposal: Extend Staked PSYS distribution', () => {
   let dai: Erc20;
   let aDAI: Erc20;
   let proposalId: BigNumber;
-  let psysStakeV2: StakedPSYSV2;
-  let bptStakeV2: StakedPSYSV2;
+  let psysStakeV2: StakedPSYSV3;
+  let bptStakeV2: StakedPSYSV3;
   let stkPSYSImplAddress: string;
   let stkBptImplAddress: string;
-  let StakedPSYSV2Revision3Implementation: StakedTokenV2Rev3;
+  let StakedPSYSV3Revision3Implementation: StakedTokenV3Rev3;
   let stakedBptV2Revision2Implementation: StakedTokenBptRev2;
   before(async () => {
     await rawHRE.run('set-dre');
@@ -126,8 +126,8 @@ describe('Proposal: Extend Staked PSYS distribution', () => {
 
     psys = Erc20__factory.connect(PSYS_TOKEN, whale);
     PSYSBpt = Erc20__factory.connect(PSYS_BPT_POOL_TOKEN, bptWhale);
-    psysStakeV2 = StakedPSYSV2__factory.connect(PSYS_STAKE, proposer);
-    bptStakeV2 = StakedPSYSV2__factory.connect(BPT_STAKE, proposer);
+    psysStakeV2 = StakedPSYSV3__factory.connect(PSYS_STAKE, proposer);
+    bptStakeV2 = StakedPSYSV3__factory.connect(BPT_STAKE, proposer);
     dai = Erc20__factory.connect(DAI_TOKEN, daiHolder);
     aDAI = Erc20__factory.connect(aTokenAddress, proposer);
 
@@ -171,7 +171,7 @@ describe('Proposal: Extend Staked PSYS distribution', () => {
     stkPSYSImplAddress = stkPSYSImpl;
     stkBptImplAddress = stkBptImpl;
 
-    StakedPSYSV2Revision3Implementation = StakedTokenV2Rev3__factory.connect(
+    StakedPSYSV3Revision3Implementation = StakedTokenV3Rev3__factory.connect(
       stkPSYSImplAddress,
       proposer
     );
@@ -284,13 +284,13 @@ describe('Proposal: Extend Staked PSYS distribution', () => {
   });
 
   it('Staked PSYS Distribution End should be extended', async () => {
-    const implDistributionEnd = await StakedPSYSV2Revision3Implementation.DISTRIBUTION_END();
+    const implDistributionEnd = await StakedPSYSV3Revision3Implementation.DISTRIBUTION_END();
     const proxyDistributionEnd = await psysStakeV2.DISTRIBUTION_END();
 
     expect(implDistributionEnd).to.be.eq(proxyDistributionEnd, 'DISTRIBUTION_END SHOULD MATCH');
   });
   it('Staked PSYS revision should be 3', async () => {
-    const revisionImpl = await StakedPSYSV2Revision3Implementation.REVISION();
+    const revisionImpl = await StakedPSYSV3Revision3Implementation.REVISION();
     const revisionProxy = await psysStakeV2.REVISION();
 
     expect(revisionImpl).to.be.eq(revisionProxy, 'DISTRIBUTION_END SHOULD MATCH');

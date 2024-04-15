@@ -12,12 +12,12 @@ import {
   getATokenMock,
   getMintableErc20,
   getStakedPSYS,
-  getStakedPSYSV2,
+  getStakedPSYSV3,
 } from '../../helpers/contracts-accessors';
 import { PegasysIncentivesController } from '../../types/PegasysIncentivesController';
 import { MintableErc20 } from '../../types/MintableErc20';
 import { ATokenMock } from '../../types/ATokenMock';
-import { StakedPSYSV2 } from '../../types/StakedPSYSV2';
+import { StakedPSYSV3 } from '../../types/StakedPSYSV3';
 
 chai.use(bignumberChai());
 
@@ -31,7 +31,7 @@ export interface SignerWithAddress {
   address: tEthereumAddress;
 }
 export interface TestEnv {
-  StakedPSYSV2: StakedPSYSV2;
+  StakedPSYSV3: StakedPSYSV3;
   rewardsVault: SignerWithAddress;
   deployer: SignerWithAddress;
   users: SignerWithAddress[];
@@ -54,7 +54,7 @@ const testEnv: TestEnv = {
   users: [] as SignerWithAddress[],
   psysToken: {} as MintableErc20,
   StakedPSYS: {} as StakedPSYS,
-  StakedPSYSV2: {} as StakedPSYSV2,
+  StakedPSYSV3: {} as StakedPSYSV3,
   pegasysIncentivesController: {} as PegasysIncentivesController,
   aDaiMock: {} as ATokenMock,
   aWethMock: {} as ATokenMock,
@@ -81,7 +81,7 @@ export async function initializeMakeSuite() {
   testEnv.deployer = deployer;
   testEnv.rewardsVault = rewardsVault;
   testEnv.StakedPSYS = await getStakedPSYS();
-  testEnv.StakedPSYSV2 = await getStakedPSYSV2();
+  testEnv.StakedPSYSV3 = await getStakedPSYSV3();
   testEnv.pegasysIncentivesController = await getPegasysIncentivesController();
   testEnv.psysToken = await getMintableErc20();
   testEnv.aDaiMock = await getATokenMock({ slug: 'aDai' });

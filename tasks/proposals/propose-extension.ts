@@ -2,8 +2,8 @@ import { task } from 'hardhat/config';
 import {
   IPegasysGovernanceV2__factory,
   StakedTokenBptRev2__factory,
-  StakedTokenV2Rev3,
-  StakedTokenV2Rev3__factory,
+  StakedTokenV3Rev3,
+  StakedTokenV3Rev3__factory,
 } from '../../types';
 import { Signer } from 'ethers';
 import { getDefenderRelaySigner } from '../../helpers/defender-utils';
@@ -62,7 +62,7 @@ task('propose-extension', 'Create some proposals and votes')
       }
 
       // Calldata for stkPSYS implementation
-      const payloadstkPSYS = StakedTokenV2Rev3__factory.connect(
+      const payloadstkPSYS = StakedTokenV3Rev3__factory.connect(
         stkPSYSImpl,
         proposer
       ).interface.encodeFunctionData('initialize');

@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers';
 import { PegasysDistributionManager } from '../../../types/PegasysDistributionManager';
 import { StakedPSYS } from '../../../types/StakedPSYS';
 import { PegasysIncentivesController } from '../../../types/PegasysIncentivesController';
-import { StakedPSYSV2 } from '../../../types/StakedPSYSV2';
+import { StakedPSYSV3 } from '../../../types/StakedPSYSV3';
 
 export type UserStakeInput = {
   underlyingAsset: string;
@@ -18,7 +18,7 @@ export async function getUserIndex(
     | PegasysDistributionManager
     | PegasysIncentivesController
     | StakedPSYS
-    | StakedPSYSV2,
+    | StakedPSYSV3,
   user: string,
   asset: string
 ): Promise<BigNumber> {
