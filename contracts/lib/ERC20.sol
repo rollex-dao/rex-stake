@@ -9,7 +9,7 @@ import {SafeMath} from './SafeMath.sol';
 /**
  * @title ERC20
  * @notice Basic ERC20 implementation
- * @author Pegasys team
+ * @author Rollex team
  **/
 contract ERC20 is Context, IERC20, IERC20Detailed {
   using SafeMath for uint256;

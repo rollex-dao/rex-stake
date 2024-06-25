@@ -38,15 +38,15 @@ interface StakeUIHelperI {
     uint256 userPermitNonce;
   }
 
-  function getstkPSYSData(address user) external view returns (AssetUIData memory);
+  function getstkREXData(address user) external view returns (AssetUIData memory);
 
   function getStkBptData(address user) external view returns (AssetUIData memory);
 
-  function getStkGeneralPSYSData() external view returns (GeneralStakeUIData memory);
+  function getStkGeneralREXData() external view returns (GeneralStakeUIData memory);
 
   function getStkGeneralBptData() external view returns (GeneralStakeUIData memory);
 
-  function getStkUserPSYSData(address user) external view returns (UserStakeUIData memory);
+  function getStkUserREXData(address user) external view returns (UserStakeUIData memory);
 
   function getStkUserBptData(address user) external view returns (UserStakeUIData memory);
 

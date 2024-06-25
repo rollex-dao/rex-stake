@@ -3,33 +3,33 @@ pragma solidity 0.7.5;
 pragma experimental ABIEncoderV2;
 
 import {IERC20} from '../interfaces/IERC20.sol';
-import {IStakedPSYS} from '../interfaces/IStakedPSYS.sol';
+import {IStakedREX} from '../interfaces/IStakedREX.sol';
 import {ITransferHook} from '../interfaces/ITransferHook.sol';
 import {ERC20WithSnapshot} from '../lib/ERC20WithSnapshot.sol';
 import {SafeERC20} from '../lib/SafeERC20.sol';
 import {VersionedInitializable} from '../utils/VersionedInitializable.sol';
 import {DistributionTypes} from '../lib/DistributionTypes.sol';
-import {PegasysDistributionManager} from './PegasysDistributionManager.sol';
+import {RollexDistributionManager} from './RollexDistributionManager.sol';
 import {SafeMath} from '../lib/SafeMath.sol';
 
 /**
- * @title StakedPSYS
- * @notice Contract to stake PSYS token, tokenize the position and get rewards, inheriting from a distribution manager contract
- * @author Pegasys team
+ * @title StakedREX
+ * @notice Contract to stake REX token, tokenize the position and get rewards, inheriting from a distribution manager contract
+ * @author Rollex team
  **/
-contract StakedPSYS is
-  IStakedPSYS,
+contract StakedREX is
+  IStakedREX,
   ERC20WithSnapshot,
   VersionedInitializable,
-  PegasysDistributionManager
+  RollexDistributionManager
 {
   using SafeMath for uint256;
   using SafeERC20 for IERC20;
 
   uint256 public constant REVISION = 1;
 
-  string internal constant NAME = 'Staked PSYS';
-  string internal constant SYMBOL = 'stkPSYS';
+  string internal constant NAME = 'Staked REX';
+  string internal constant SYMBOL = 'stkREX';
   uint8 internal constant DECIMALS = 18;
 
   IERC20 public immutable STAKED_TOKEN;
@@ -64,7 +64,7 @@ contract StakedPSYS is
   )
     public
     ERC20WithSnapshot(NAME, SYMBOL, DECIMALS)
-    PegasysDistributionManager(emissionManager, distributionDuration)
+    RollexDistributionManager(emissionManager, distributionDuration)
   {
     STAKED_TOKEN = stakedToken;
     REWARD_TOKEN = rewardToken;
@@ -77,7 +77,7 @@ contract StakedPSYS is
    * @dev Called by the proxy contract
    **/
   function initialize(
-    ITransferHook pegasysGovernance,
+    ITransferHook rollexGovernance,
     string calldata name,
     string calldata symbol,
     uint8 decimals
@@ -85,7 +85,7 @@ contract StakedPSYS is
     _setName(name);
     _setSymbol(symbol);
     _setDecimals(decimals);
-    _setPegasysGovernance(pegasysGovernance);
+    _setRollexGovernance(rollexGovernance);
   }
 
   function stake(address onBehalfOf, uint256 amount) external override {

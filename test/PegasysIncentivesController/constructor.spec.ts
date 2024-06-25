@@ -3,10 +3,10 @@ import { timeLatest } from '../../helpers/misc-utils';
 const { expect } = require('chai');
 
 import { makeSuite } from '../helpers/make-suite';
-import { deployPegasysIncentivesController } from '../../helpers/contracts-accessors';
+import { deployRollexIncentivesController } from '../../helpers/contracts-accessors';
 import { RANDOM_ADDRESSES } from '../../helpers/constants';
 
-makeSuite('PegasysIncentivesController constructor tests', () => {
+makeSuite('RollexIncentivesController constructor tests', () => {
   it('should assign correct params', async () => {
     const peiEmissionManager = RANDOM_ADDRESSES[1];
     const rewardToken = RANDOM_ADDRESSES[3];
@@ -15,7 +15,7 @@ makeSuite('PegasysIncentivesController constructor tests', () => {
     const extraPsmReward = '100';
     const distributionDuration = '100';
 
-    const pegasysIncentivesController = await deployPegasysIncentivesController([
+    const rollexIncentivesController = await deployRollexIncentivesController([
       rewardToken,
       rewardsVault,
       psm,
@@ -23,16 +23,16 @@ makeSuite('PegasysIncentivesController constructor tests', () => {
       peiEmissionManager,
       distributionDuration,
     ]);
-    await expect(await pegasysIncentivesController.REWARD_TOKEN()).to.be.equal(rewardToken);
-    await expect(await pegasysIncentivesController.REWARDS_VAULT()).to.be.equal(rewardsVault);
-    await expect(await pegasysIncentivesController.PSM()).to.be.equal(psm);
-    await expect((await pegasysIncentivesController.EXTRA_PSM_REWARD()).toString()).to.be.equal(
+    await expect(await rollexIncentivesController.REWARD_TOKEN()).to.be.equal(rewardToken);
+    await expect(await rollexIncentivesController.REWARDS_VAULT()).to.be.equal(rewardsVault);
+    await expect(await rollexIncentivesController.PSM()).to.be.equal(psm);
+    await expect((await rollexIncentivesController.EXTRA_PSM_REWARD()).toString()).to.be.equal(
       extraPsmReward
     );
-    await expect((await pegasysIncentivesController.EMISSION_MANAGER()).toString()).to.be.equal(
+    await expect((await rollexIncentivesController.EMISSION_MANAGER()).toString()).to.be.equal(
       peiEmissionManager
     );
-    await expect((await pegasysIncentivesController.DISTRIBUTION_END()).toString()).to.be.equal(
+    await expect((await rollexIncentivesController.DISTRIBUTION_END()).toString()).to.be.equal(
       (await timeLatest()).plus(distributionDuration).toString()
     );
   });

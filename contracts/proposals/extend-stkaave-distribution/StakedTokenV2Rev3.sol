@@ -709,7 +709,7 @@ contract ERC20 is Context, IERC20 {
   function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual {}
 }
 
-interface IStakedPSYS {
+interface IStakedREX {
   function stake(address to, uint256 amount) external;
 
   function redeem(address to, uint256 amount) external;
@@ -796,7 +796,7 @@ library SafeERC20 {
  * a parent initializer twice, or ensure that all initializers are idempotent,
  * because this is not dealt with automatically as with constructors.
  *
- * @author Pegasys team  , inspired by the OpenZeppelin Initializable contract
+ * @author Rollex team  , inspired by the OpenZeppelin Initializable contract
  */
 abstract contract VersionedInitializable {
   /**
@@ -824,18 +824,18 @@ abstract contract VersionedInitializable {
   uint256[50] private ______gap;
 }
 
-interface IPegasysDistributionManager {
+interface IRollexDistributionManager {
   function configureAssets(
     DistributionTypes.AssetConfigInput[] calldata assetsConfigInput
   ) external;
 }
 
 /**
- * @title PegasysDistributionManager
+ * @title RollexDistributionManager
  * @notice Accounting contract to manage multiple staking distributions
- * @author Pegasys team
+ * @author Rollex team
  **/
-contract PegasysDistributionManager is IPegasysDistributionManager {
+contract RollexDistributionManager is IRollexDistributionManager {
   using SafeMath for uint256;
 
   struct AssetData {
@@ -891,7 +891,7 @@ contract PegasysDistributionManager is IPegasysDistributionManager {
 
   /**
    * @dev Updates the state of one distribution, mainly rewards index and timestamp
-   * @param underlyingAsset The address used as key in the distribution, for example sPSYS or the aTokens addresses on Pegasys
+   * @param underlyingAsset The address used as key in the distribution, for example sREX or the aTokens addresses on Rollex
    * @param assetConfig Storage pointer to the distribution's config
    * @param totalStaked Current total of staked assets for this distribution
    * @return The new distribution index
@@ -1071,8 +1071,8 @@ contract PegasysDistributionManager is IPegasysDistributionManager {
 }
 
 /**
- * @notice implementation of the PSYS token contract
- * @author Pegasys team
+ * @notice implementation of the REX token contract
+ * @author Rollex team
  */
 abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDelegationToken {
   using SafeMath for uint256;
@@ -1159,8 +1159,8 @@ abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDeleg
   /**
    * @dev returns the total supply at a certain block number
    * used by the voting strategy contracts to calculate the total votes needed for threshold/quorum
-   * In this initial implementation with no PSYS minting, simply returns the current supply
-   * A snapshots mapping will need to be added in case a mint function is added to the PSYS token in the future
+   * In this initial implementation with no REX minting, simply returns the current supply
+   * A snapshots mapping will need to be added in case a mint function is added to the REX token in the future
    **/
   function totalSupplyAt(uint256 blockNumber) external view override returns (uint256) {
     return super.totalSupply();
@@ -1304,7 +1304,7 @@ abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDeleg
   /**
    * @dev returns the delegation data (snapshot, snapshotsCount, list of delegates) by delegation type
    * NOTE: Ideal implementation would have mapped this in a struct by delegation type. Unfortunately,
-   * the PSYS token and StakeToken already include a mapping for the snapshots, so we require contracts
+   * the REX token and StakeToken already include a mapping for the snapshots, so we require contracts
    * who inherit from this to provide access to the delegation data by overriding this method.
    * @param delegationType the type of delegation
    **/
@@ -1373,7 +1373,7 @@ abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDeleg
 /**
  * @title ERC20WithSnapshot
  * @notice ERC20 including snapshots of balances on transfer-related actions
- * @author Pegasys team
+ * @author Rollex team
  **/
 abstract contract GovernancePowerWithSnapshot is GovernancePowerDelegationERC20 {
   using SafeMath for uint256;
@@ -1382,31 +1382,31 @@ abstract contract GovernancePowerWithSnapshot is GovernancePowerDelegationERC20 
    * @dev The following storage layout points to the prior StakedToken.sol implementation:
    * _snapshots => _votingSnapshots
    * _snapshotsCounts =>  _votingSnapshotsCounts
-   * _pegasysGovernance => _pegasysGovernance
+   * _rollexGovernance => _rollexGovernance
    */
   mapping(address => mapping(uint256 => Snapshot)) public _votingSnapshots;
   mapping(address => uint256) public _votingSnapshotsCounts;
 
-  /// @dev reference to the Pegasys governance contract to call (if initialized) on _beforeTokenTransfer
-  /// !!! IMPORTANT The Pegasys governance is considered a trustable contract, being its responsibility
+  /// @dev reference to the Rollex governance contract to call (if initialized) on _beforeTokenTransfer
+  /// !!! IMPORTANT The Rollex governance is considered a trustable contract, being its responsibility
   /// to control all potential reentrancies by calling back the this contract
-  ITransferHook public _pegasysGovernance;
+  ITransferHook public _rollexGovernance;
 
-  function _setPegasysGovernance(ITransferHook pegasysGovernance) internal virtual {
-    _pegasysGovernance = pegasysGovernance;
+  function _setRollexGovernance(ITransferHook rollexGovernance) internal virtual {
+    _rollexGovernance = rollexGovernance;
   }
 }
 
 /**
  * @title StakedToken
- * @notice Contract to stake PSYS token, tokenize the position and get rewards, inheriting from a distribution manager contract
- * @author Pegasys team
+ * @notice Contract to stake REX token, tokenize the position and get rewards, inheriting from a distribution manager contract
+ * @author Rollex team
  **/
 contract StakedTokenV3Rev3 is
-  IStakedPSYS,
+  IStakedREX,
   GovernancePowerWithSnapshot,
   VersionedInitializable,
-  PegasysDistributionManager
+  RollexDistributionManager
 {
   using SafeMath for uint256;
   using SafeERC20 for IERC20;
@@ -1466,13 +1466,13 @@ contract StakedTokenV3Rev3 is
     string memory symbol,
     uint8 decimals,
     address governance
-  ) public ERC20(name, symbol) PegasysDistributionManager(emissionManager, distributionDuration) {
+  ) public ERC20(name, symbol) RollexDistributionManager(emissionManager, distributionDuration) {
     STAKED_TOKEN = stakedToken;
     REWARD_TOKEN = rewardToken;
     COOLDOWN_SECONDS = cooldownSeconds;
     UNSTAKE_WINDOW = unstakeWindow;
     REWARDS_VAULT = rewardsVault;
-    _pegasysGovernance = ITransferHook(governance);
+    _rollexGovernance = ITransferHook(governance);
     ERC20._setupDecimals(decimals);
   }
 
@@ -1497,7 +1497,7 @@ contract StakedTokenV3Rev3 is
       )
     );
 
-    // Update lastUpdateTimestamp of stkPSYS to reward users since the end of the prior staking period
+    // Update lastUpdateTimestamp of stkREX to reward users since the end of the prior staking period
     AssetData storage assetData = assets[address(this)];
     assetData.lastUpdateTimestamp = 1620594720;
   }
@@ -1846,10 +1846,10 @@ contract StakedTokenV3Rev3 is
       DelegationType.PROPOSITION_POWER
     );
 
-    // caching the pegasys governance address to avoid multiple state loads
-    ITransferHook pegasysGovernance = _pegasysGovernance;
-    if (pegasysGovernance != ITransferHook(0)) {
-      pegasysGovernance.onTransfer(from, to, amount);
+    // caching the rollex governance address to avoid multiple state loads
+    ITransferHook rollexGovernance = _rollexGovernance;
+    if (rollexGovernance != ITransferHook(0)) {
+      rollexGovernance.onTransfer(from, to, amount);
     }
   }
 

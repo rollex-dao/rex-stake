@@ -4,14 +4,14 @@ const ChaiBigNumber = require('chai-bignumber');
 
 import { ethers, ContractTransaction, BigNumberish, BigNumber } from 'ethers';
 
-import { StakedPSYS } from '../../../types/StakedPSYS';
+import { StakedREX } from '../../../types/StakedREX';
 
 import { getRewards } from '../../DistributionManager/data-helpers/base-math';
 import { getUserIndex } from '../../DistributionManager/data-helpers/asset-user-data';
 import { eventChecker } from '../../helpers/comparator-engine';
 import { waitForTx, increaseTime } from '../../../helpers/misc-utils';
 import { SignerWithAddress } from '../../helpers/make-suite';
-import { StakedPSYSV3 } from '../../../types/StakedPSYSV3';
+import { StakedREXV3 } from '../../../types/StakedREXV3';
 import { solidity } from 'ethereum-waffle';
 
 chai.use(solidity);
@@ -22,18 +22,18 @@ type AssetConfig = {
 };
 
 export const compareRewardsAtAction = async (
-  StakedPSYSV3: StakedPSYSV3,
+  StakedREXV3: StakedREXV3,
   userAddress: string,
   actions: () => Promise<ContractTransaction>[],
   shouldReward?: boolean,
   assetConfig?: AssetConfig
 ): Promise<void> => {
-  const underlyingAsset = StakedPSYSV3.address;
+  const underlyingAsset = StakedREXV3.address;
   // To prevent coverage to fail, add 5 seconds per comparisson.
   await increaseTime(5);
 
   const rewardsBalanceBefore = BigNumber.from(
-    await (await StakedPSYSV3.getTotalRewardsBalance(userAddress)).toString()
+    await (await StakedREXV3.getTotalRewardsBalance(userAddress)).toString()
   );
 
   // Configure assets of stake token
@@ -44,25 +44,25 @@ export const compareRewardsAtAction = async (
       }
     : {
         emissionPerSecond: '100',
-        totalStaked: await StakedPSYSV3.totalSupply(),
+        totalStaked: await StakedREXV3.totalSupply(),
         underlyingAsset,
       };
-  await StakedPSYSV3.configureAssets([assetConfiguration]);
+  await StakedREXV3.configureAssets([assetConfiguration]);
 
-  const userBalance = await StakedPSYSV3.balanceOf(userAddress);
+  const userBalance = await StakedREXV3.balanceOf(userAddress);
   // Get index before actions
-  const userIndexBefore = await getUserIndex(StakedPSYSV3, userAddress, underlyingAsset);
+  const userIndexBefore = await getUserIndex(StakedREXV3, userAddress, underlyingAsset);
 
   // Dispatch actions that can or not update the user index
   const receipts: ethers.ContractReceipt[] = await Promise.all(
     await actions().map(async (action) => waitForTx(await action))
   );
   // Get index after actions
-  const userIndexAfter = await getUserIndex(StakedPSYSV3, userAddress, underlyingAsset);
+  const userIndexAfter = await getUserIndex(StakedREXV3, userAddress, underlyingAsset);
 
   // Compare calculated JS rewards versus Solidity user rewards
   const rewardsBalanceAfter = BigNumber.from(
-    await (await StakedPSYSV3.getTotalRewardsBalance(userAddress)).toString()
+    await (await StakedREXV3.getTotalRewardsBalance(userAddress)).toString()
   );
   const expectedAccruedRewards = getRewards(userBalance, userIndexAfter, userIndexBefore);
 
@@ -92,7 +92,7 @@ export const compareRewardsAtAction = async (
 };
 
 export const compareRewardsAtTransfer = async (
-  StakedPSYSV3: StakedPSYSV3,
+  StakedREXV3: StakedREXV3,
   from: SignerWithAddress,
   to: SignerWithAddress,
   amount: BigNumberish,
@@ -105,34 +105,34 @@ export const compareRewardsAtTransfer = async (
 
   const fromAddress = from.address;
   const toAddress = to.address;
-  const underlyingAsset = StakedPSYSV3.address;
-  const fromSavedBalance = await StakedPSYSV3.balanceOf(fromAddress);
-  const toSavedBalance = await StakedPSYSV3.balanceOf(toAddress);
+  const underlyingAsset = StakedREXV3.address;
+  const fromSavedBalance = await StakedREXV3.balanceOf(fromAddress);
+  const toSavedBalance = await StakedREXV3.balanceOf(toAddress);
   const fromSavedRewards = BigNumber.from(
-    await (await StakedPSYSV3.getTotalRewardsBalance(fromAddress)).toString()
+    await (await StakedREXV3.getTotalRewardsBalance(fromAddress)).toString()
   );
   const toSavedRewards = BigNumber.from(
-    await (await StakedPSYSV3.getTotalRewardsBalance(toAddress)).toString()
+    await (await StakedREXV3.getTotalRewardsBalance(toAddress)).toString()
   );
   // Get index before actions
-  const fromIndexBefore = await getUserIndex(StakedPSYSV3, fromAddress, underlyingAsset);
-  const toIndexBefore = await getUserIndex(StakedPSYSV3, toAddress, underlyingAsset);
+  const fromIndexBefore = await getUserIndex(StakedREXV3, fromAddress, underlyingAsset);
+  const toIndexBefore = await getUserIndex(StakedREXV3, toAddress, underlyingAsset);
 
   // Load actions that can or not update the user index
-  const actions = () => [StakedPSYSV3.connect(from.signer).transfer(toAddress, amount)];
+  const actions = () => [StakedREXV3.connect(from.signer).transfer(toAddress, amount)];
 
   // Fire reward comparator
-  await compareRewardsAtAction(StakedPSYSV3, fromAddress, actions, fromShouldReward, assetConfig);
+  await compareRewardsAtAction(StakedREXV3, fromAddress, actions, fromShouldReward, assetConfig);
 
   // Check rewards after transfer
 
   // Get index after actions
-  const fromIndexAfter = await getUserIndex(StakedPSYSV3, fromAddress, underlyingAsset);
-  const toIndexAfter = await getUserIndex(StakedPSYSV3, toAddress, underlyingAsset);
+  const fromIndexAfter = await getUserIndex(StakedREXV3, fromAddress, underlyingAsset);
+  const toIndexAfter = await getUserIndex(StakedREXV3, toAddress, underlyingAsset);
 
   // FROM: Compare calculated JS rewards versus Solidity user rewards
   const fromRewardsBalanceAfter = BigNumber.from(
-    await (await StakedPSYSV3.getTotalRewardsBalance(fromAddress)).toString()
+    await (await StakedREXV3.getTotalRewardsBalance(fromAddress)).toString()
   );
   const fromExpectedAccruedRewards = getRewards(fromSavedBalance, fromIndexAfter, fromIndexBefore);
   // FIXME: Temporarily removed type judgment due to version-dependent issues
@@ -140,7 +140,7 @@ export const compareRewardsAtTransfer = async (
 
   // TO: Compare calculated JS rewards versus Solidity user rewards
   const toRewardsBalanceAfter = BigNumber.from(
-    await (await StakedPSYSV3.getTotalRewardsBalance(toAddress)).toString()
+    await (await StakedREXV3.getTotalRewardsBalance(toAddress)).toString()
   );
   const toExpectedAccruedRewards = getRewards(toSavedBalance, toIndexAfter, toIndexBefore);
   // FIXME: Temporarily removed type judgment due to version-dependent issues
@@ -164,8 +164,8 @@ export const compareRewardsAtTransfer = async (
   if (fromAddress === toAddress) {
     expect(fromSavedBalance.toString()).to.be.equal(toSavedBalance.toString());
   } else {
-    const fromNewBalance = await (await StakedPSYSV3.balanceOf(fromAddress)).toString();
-    const toNewBalance = await (await StakedPSYSV3.balanceOf(toAddress)).toString();
+    const fromNewBalance = await (await StakedREXV3.balanceOf(fromAddress)).toString();
+    const toNewBalance = await (await StakedREXV3.balanceOf(toAddress)).toString();
     expect(fromNewBalance).to.be.equal(fromSavedBalance.sub(amount).toString());
     expect(toNewBalance).to.be.equal(toSavedBalance.add(amount).toString());
   }

@@ -6,24 +6,24 @@ import { tEthereumAddress } from '../../helpers/types';
 import chai from 'chai';
 // @ts-ignore
 import bignumberChai from 'chai-bignumber';
-import { StakedPSYS } from '../../types/StakedPSYS';
+import { StakedREX } from '../../types/StakedREX';
 import {
-  getPegasysIncentivesController,
+  getRollexIncentivesController,
   getATokenMock,
   getMintableErc20,
-  getStakedPSYS,
-  getStakedPSYSV3,
+  getStakedREX,
+  getStakedREXV3,
 } from '../../helpers/contracts-accessors';
-import { PegasysIncentivesController } from '../../types/PegasysIncentivesController';
+import { RollexIncentivesController } from '../../types/RollexIncentivesController';
 import { MintableErc20 } from '../../types/MintableErc20';
 import { ATokenMock } from '../../types/ATokenMock';
-import { StakedPSYSV3 } from '../../types/StakedPSYSV3';
+import { StakedREXV3 } from '../../types/StakedREXV3';
 
 chai.use(bignumberChai());
 
-export let StakedPSYSInitializeTimestamp = 0;
-export const setStakedPSYSInitializeTimestamp = (timestamp: number) => {
-  StakedPSYSInitializeTimestamp = timestamp;
+export let StakedREXInitializeTimestamp = 0;
+export const setStakedREXInitializeTimestamp = (timestamp: number) => {
+  StakedREXInitializeTimestamp = timestamp;
 };
 
 export interface SignerWithAddress {
@@ -31,13 +31,13 @@ export interface SignerWithAddress {
   address: tEthereumAddress;
 }
 export interface TestEnv {
-  StakedPSYSV3: StakedPSYSV3;
+  StakedREXV3: StakedREXV3;
   rewardsVault: SignerWithAddress;
   deployer: SignerWithAddress;
   users: SignerWithAddress[];
-  psysToken: MintableErc20;
-  pegasysIncentivesController: PegasysIncentivesController;
-  StakedPSYS: StakedPSYS;
+  rexToken: MintableErc20;
+  rollexIncentivesController: RollexIncentivesController;
+  StakedREX: StakedREX;
   aDaiMock: ATokenMock;
   aWethMock: ATokenMock;
 }
@@ -52,10 +52,10 @@ const setBuidlerevmSnapshotId = (id: string) => {
 const testEnv: TestEnv = {
   deployer: {} as SignerWithAddress,
   users: [] as SignerWithAddress[],
-  psysToken: {} as MintableErc20,
-  StakedPSYS: {} as StakedPSYS,
-  StakedPSYSV3: {} as StakedPSYSV3,
-  pegasysIncentivesController: {} as PegasysIncentivesController,
+  rexToken: {} as MintableErc20,
+  StakedREX: {} as StakedREX,
+  StakedREXV3: {} as StakedREXV3,
+  rollexIncentivesController: {} as RollexIncentivesController,
   aDaiMock: {} as ATokenMock,
   aWethMock: {} as ATokenMock,
 } as TestEnv;
@@ -80,10 +80,10 @@ export async function initializeMakeSuite() {
   }
   testEnv.deployer = deployer;
   testEnv.rewardsVault = rewardsVault;
-  testEnv.StakedPSYS = await getStakedPSYS();
-  testEnv.StakedPSYSV3 = await getStakedPSYSV3();
-  testEnv.pegasysIncentivesController = await getPegasysIncentivesController();
-  testEnv.psysToken = await getMintableErc20();
+  testEnv.StakedREX = await getStakedREX();
+  testEnv.StakedREXV3 = await getStakedREXV3();
+  testEnv.rollexIncentivesController = await getRollexIncentivesController();
+  testEnv.rexToken = await getMintableErc20();
   testEnv.aDaiMock = await getATokenMock({ slug: 'aDai' });
   testEnv.aWethMock = await getATokenMock({ slug: 'aWeth' });
 }

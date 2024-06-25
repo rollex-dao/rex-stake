@@ -70,7 +70,7 @@ interface AggregatedStakedTokenV3 {
 
   function UNSTAKE_WINDOW() external view returns (uint256);
 
-  function _pegasysGovernance() external view returns (address);
+  function _rollexGovernance() external view returns (address);
 
   function _nonces(address) external view returns (uint256);
 

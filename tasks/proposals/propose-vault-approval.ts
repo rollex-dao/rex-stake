@@ -1,5 +1,5 @@
 import { task } from 'hardhat/config';
-import { IPegasysGovernanceV2__factory } from '../../types';
+import { IRollexGovernanceV2__factory } from '../../types';
 import { Signer } from 'ethers';
 import { getDefenderRelaySigner } from '../../helpers/defender-utils';
 import { DRE } from '../../helpers/misc-utils';
@@ -7,10 +7,10 @@ import { MAX_UINT_AMOUNT } from '../../helpers/constants';
 
 task('propose-vault-approval', 'Create some proposals and votes')
   .addParam('rewardsVaultController')
-  .addParam('psysProxy')
-  .addParam('stkPSYSProxy')
+  .addParam('rexProxy')
+  .addParam('stkREXProxy')
   .addParam('stkBptProxy')
-  .addParam('pegasysGovernance')
+  .addParam('rollexGovernance')
   .addParam('shortExecutor')
   .addParam('ipfsHash')
   .addFlag('defender')
@@ -18,12 +18,12 @@ task('propose-vault-approval', 'Create some proposals and votes')
     async (
       {
         rewardsVaultController,
-        pegasysGovernance,
+        rollexGovernance,
         shortExecutor,
         defender,
-        stkPSYSProxy,
+        stkREXProxy,
         stkBptProxy,
-        psysProxy,
+        rexProxy,
         ipfsHash,
       },
       localBRE: any
@@ -38,19 +38,19 @@ task('propose-vault-approval', 'Create some proposals and votes')
         proposer = signer;
       }
 
-      // Calldata for stkPSYS approval
-      const payloadForstkPSYSApproval = DRE.ethers.utils.defaultAbiCoder.encode(
+      // Calldata for stkREX approval
+      const payloadForstkREXApproval = DRE.ethers.utils.defaultAbiCoder.encode(
         ['address', 'address', 'uint256'],
-        [psysProxy, stkPSYSProxy, MAX_UINT_AMOUNT]
+        [rexProxy, stkREXProxy, MAX_UINT_AMOUNT]
       );
       // Calldata for StkBpt approval
       const payloadForStkBPTApproval = DRE.ethers.utils.defaultAbiCoder.encode(
         ['address', 'address', 'uint256'],
-        [psysProxy, stkBptProxy, MAX_UINT_AMOUNT]
+        [rexProxy, stkBptProxy, MAX_UINT_AMOUNT]
       );
 
       const executeSignature = 'approve(address,address,uint256)';
-      const gov = await IPegasysGovernanceV2__factory.connect(pegasysGovernance, proposer);
+      const gov = await IRollexGovernanceV2__factory.connect(rollexGovernance, proposer);
 
       try {
         const tx = await gov.create(
@@ -58,7 +58,7 @@ task('propose-vault-approval', 'Create some proposals and votes')
           [rewardsVaultController, rewardsVaultController],
           ['0', '0'],
           [executeSignature, executeSignature],
-          [payloadForstkPSYSApproval, payloadForStkBPTApproval],
+          [payloadForstkREXApproval, payloadForStkBPTApproval],
           [false, false],
           ipfsHash,
           { gasLimit: 1000000 }

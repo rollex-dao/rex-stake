@@ -1,7 +1,7 @@
 pragma solidity 0.7.5;
 pragma abicoder v2;
 
-interface AggregatedStakedPSYSV3 {
+interface AggregatedStakedREXV3 {
   event Approval(address indexed owner, address indexed spender, uint256 value);
   event AssetConfigUpdated(address indexed asset, uint256 emission);
   event AssetIndexUpdated(address indexed asset, uint256 index);
@@ -71,7 +71,7 @@ interface AggregatedStakedPSYSV3 {
 
   function UNSTAKE_WINDOW() external view returns (uint256);
 
-  function _pegasysGovernance() external view returns (address);
+  function _rollexGovernance() external view returns (address);
 
   function _exchangeRateSnapshots(
     uint256

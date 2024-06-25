@@ -4,14 +4,14 @@ pragma experimental ABIEncoderV2;
 
 import {SafeMath} from '../lib/SafeMath.sol';
 import {DistributionTypes} from '../lib/DistributionTypes.sol';
-import {IPegasysDistributionManager} from '../interfaces/IPegasysDistributionManager.sol';
+import {IRollexDistributionManager} from '../interfaces/IRollexDistributionManager.sol';
 
 /**
- * @title PegasysDistributionManager
+ * @title RollexDistributionManager
  * @notice Accounting contract to manage multiple staking distributions
- * @author Pegasys team
+ * @author Rollex team
  **/
-contract PegasysDistributionManager is IPegasysDistributionManager {
+contract RollexDistributionManager is IRollexDistributionManager {
   using SafeMath for uint256;
 
   struct AssetData {
@@ -67,7 +67,7 @@ contract PegasysDistributionManager is IPegasysDistributionManager {
 
   /**
    * @dev Updates the state of one distribution, mainly rewards index and timestamp
-   * @param underlyingAsset The address used as key in the distribution, for example sPSYS or the aTokens addresses on Pegasys
+   * @param underlyingAsset The address used as key in the distribution, for example sREX or the aTokens addresses on Rollex
    * @param assetConfig Storage pointer to the distribution's config
    * @param totalStaked Current total of staked assets for this distribution
    * @return The new distribution index

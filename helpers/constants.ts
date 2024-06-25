@@ -9,12 +9,12 @@ export const COOLDOWN_SECONDS = '3600'; // 1 hour in seconds
 export const UNSTAKE_WINDOW = '1800'; // 30 min in seconds
 export const DISTRIBUTION_DURATION = '86400'; // 1 day in seconds
 
-export const STAKED_PSYS_NAME = 'Staked PSYS';
-export const STAKED_PSYS_SYMBOL = 'stkPSYS';
-export const STAKED_PSYS_DECIMALS = 18;
+export const STAKED_REX_NAME = 'Staked REX';
+export const STAKED_REX_SYMBOL = 'stkREX';
+export const STAKED_REX_DECIMALS = 18;
 
-export const PSYS_GOVERNANCE_V2 = '0x4894A8900D0fDB4DAAFA80383F212f03E1d0f351';
-export const PSYS_TOKEN = '0x48023b16c3e81AA7F6eFFbdEB35Bb83f4f31a8fd';
+export const REX_GOVERNANCE_V2 = '0x4894A8900D0fDB4DAAFA80383F212f03E1d0f351';
+export const REX_TOKEN = '0x48023b16c3e81AA7F6eFFbdEB35Bb83f4f31a8fd';
 export const WETH = '0x4200000000000000000000000000000000000006';
 export const REWARDS_VAULT = '0x0460cC46f1703EE6A014a136354D8707cBD75f14'; //AaveEcossystemReserveV2 as Proxy
 export const LONG_EXECUTOR = '0xEC2d95Fa98F69401648484A6584AeE6de586b65c';
@@ -46,11 +46,11 @@ export const RANDOM_ADDRESSES = [
   '0x0000000000000000000000000000000000000721',
 ];
 
-export const getPSYStokenPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
+export const getREXtokenPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
   getParamPerNetwork<tEthereumAddress>(
     {
       [eEthereumNetwork.hardhat]: ZERO_ADDRESS,
-      [eEthereumNetwork.main]: PSYS_TOKEN,
+      [eEthereumNetwork.main]: REX_TOKEN,
     },
     network
   );
@@ -73,7 +73,7 @@ export const getUnstakeWindowPerNetwork = (network: eEthereumNetwork): tEthereum
     network
   );
 
-export const getPegasysAdminPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
+export const getRollexAdminPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
   getParamPerNetwork<tEthereumAddress>(
     {
       [eEthereumNetwork.hardhat]: ZERO_ADDRESS,
@@ -91,7 +91,7 @@ export const getDistributionDurationPerNetwork = (network: eEthereumNetwork): tE
     network
   );
 
-export const getPegasysIncentivesVaultPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
+export const getRollexIncentivesVaultPerNetwork = (network: eEthereumNetwork): tEthereumAddress =>
   getParamPerNetwork<tEthereumAddress>(
     {
       [eEthereumNetwork.hardhat]: ZERO_ADDRESS,

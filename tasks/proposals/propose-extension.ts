@@ -1,6 +1,6 @@
 import { task } from 'hardhat/config';
 import {
-  IPegasysGovernanceV2__factory,
+  IRollexGovernanceV2__factory,
   StakedTokenBptRev2__factory,
   StakedTokenV3Rev3,
   StakedTokenV3Rev3__factory,
@@ -10,22 +10,22 @@ import { getDefenderRelaySigner } from '../../helpers/defender-utils';
 import { DRE } from '../../helpers/misc-utils';
 
 task('propose-extension', 'Create some proposals and votes')
-  .addParam('stkPSYSProxy')
-  .addParam('stkPSYSImpl')
+  .addParam('stkREXProxy')
+  .addParam('stkREXImpl')
   .addParam('stkBptProxy')
   .addParam('stkBptImpl')
-  .addParam('pegasysGovernance')
+  .addParam('rollexGovernance')
   .addParam('longExecutor')
   .addParam('ipfsHash')
   .addFlag('defender')
   .setAction(
     async (
       {
-        pegasysGovernance,
+        rollexGovernance,
         longExecutor,
         defender,
-        stkPSYSProxy,
-        stkPSYSImpl,
+        stkREXProxy,
+        stkREXImpl,
         stkBptProxy,
         stkBptImpl,
         ipfsHash,
@@ -42,8 +42,8 @@ task('propose-extension', 'Create some proposals and votes')
         proposer = signer;
       }
 
-      if (!stkPSYSImpl) {
-        throw '[hh-task][propose-extension] stkPSYSImpl param is missing';
+      if (!stkREXImpl) {
+        throw '[hh-task][propose-extension] stkREXImpl param is missing';
       }
       if (!stkBptImpl) {
         throw '[hh-task][propose-extension] stkBptImpl param is missing';
@@ -51,8 +51,8 @@ task('propose-extension', 'Create some proposals and votes')
       if (!longExecutor) {
         throw '[hh-task][propose-extension] longExecutor param is missing';
       }
-      if (!stkPSYSProxy) {
-        throw '[hh-task][propose-extension] stkPSYSProxy param is missing';
+      if (!stkREXProxy) {
+        throw '[hh-task][propose-extension] stkREXProxy param is missing';
       }
       if (!stkBptProxy) {
         throw '[hh-task][propose-extension] stkBptProxy param is missing';
@@ -61,14 +61,14 @@ task('propose-extension', 'Create some proposals and votes')
         throw '[hh-task][propose-extension] ipfsHash param is missing';
       }
 
-      // Calldata for stkPSYS implementation
-      const payloadstkPSYS = StakedTokenV3Rev3__factory.connect(
-        stkPSYSImpl,
+      // Calldata for stkREX implementation
+      const payloadstkREX = StakedTokenV3Rev3__factory.connect(
+        stkREXImpl,
         proposer
       ).interface.encodeFunctionData('initialize');
-      const callDatastkPSYS = DRE.ethers.utils.defaultAbiCoder.encode(
+      const callDatastkREX = DRE.ethers.utils.defaultAbiCoder.encode(
         ['address', 'bytes'],
-        [stkPSYSImpl, payloadstkPSYS]
+        [stkREXImpl, payloadstkREX]
       );
 
       // Calldata for StkBpt implementation
@@ -82,15 +82,15 @@ task('propose-extension', 'Create some proposals and votes')
         [stkBptImpl, payloadStkBpt]
       );
       const executeSignature = 'upgradeToAndCall(address,bytes)';
-      const gov = await IPegasysGovernanceV2__factory.connect(pegasysGovernance, proposer);
+      const gov = await IRollexGovernanceV2__factory.connect(rollexGovernance, proposer);
 
       try {
         const tx = await gov.create(
           longExecutor,
-          [stkPSYSProxy, stkBptProxy],
+          [stkREXProxy, stkBptProxy],
           ['0', '0'],
           [executeSignature, executeSignature],
-          [callDatastkPSYS, callDataStkBpt],
+          [callDatastkREX, callDataStkBpt],
           [false, false],
           ipfsHash,
           { gasLimit: 1000000 }

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.7.5;
 
-interface IStakedPSYSImplWithInitialize {
+interface IStakedREXImplWithInitialize {
   function initialize(
-    address pegasysGovernance,
+    address rollexGovernance,
     string calldata name,
     string calldata symbol,
     uint8 decimals

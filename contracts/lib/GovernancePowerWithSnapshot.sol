@@ -9,7 +9,7 @@ import {GovernancePowerDelegationERC20} from '@aave/aave-token/contracts/token/b
 /**
  * @title ERC20WithSnapshot
  * @notice ERC20 including snapshots of balances on transfer-related actions
- * @author Pegasys team
+ * @author Rollex team
  **/
 abstract contract GovernancePowerWithSnapshot is GovernancePowerDelegationERC20 {
   using SafeMath for uint256;
@@ -18,17 +18,17 @@ abstract contract GovernancePowerWithSnapshot is GovernancePowerDelegationERC20 
    * @dev The following storage layout points to the prior StakedToken.sol implementation:
    * _snapshots => _votingSnapshots
    * _snapshotsCounts =>  _votingSnapshotsCounts
-   * _pegasysGovernance => _pegasysGovernance
+   * _rollexGovernance => _rollexGovernance
    */
   mapping(address => mapping(uint256 => Snapshot)) public _votingSnapshots;
   mapping(address => uint256) public _votingSnapshotsCounts;
 
-  /// @dev reference to the Pegasys governance contract to call (if initialized) on _beforeTokenTransfer
-  /// !!! IMPORTANT The Pegasys governance is considered a trustable contract, being its responsibility
+  /// @dev reference to the Rollex governance contract to call (if initialized) on _beforeTokenTransfer
+  /// !!! IMPORTANT The Rollex governance is considered a trustable contract, being its responsibility
   /// to control all potential reentrancies by calling back the this contract
-  ITransferHook public _pegasysGovernance;
+  ITransferHook public _rollexGovernance;
 
-  function _setPegasysGovernance(ITransferHook pegasysGovernance) internal virtual {
-    _pegasysGovernance = pegasysGovernance;
+  function _setRollexGovernance(ITransferHook rollexGovernance) internal virtual {
+    _rollexGovernance = rollexGovernance;
   }
 }

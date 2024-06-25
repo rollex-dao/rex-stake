@@ -1,18 +1,18 @@
 import { deployContract, getContractFactory, getContract } from './contracts-helpers';
 import { eContractid, tEthereumAddress } from './types';
 import { MintableErc20 } from '../types/MintableErc20';
-import { StakedPSYS } from '../types/StakedPSYS';
-import { StakedPSYSV3 } from '../types/StakedPSYSV3';
+import { StakedREX } from '../types/StakedREX';
+import { StakedREXV3 } from '../types/StakedREXV3';
 import { ICRPFactory } from '../types/ICRPFactory'; // Configurable right pool factory
 import { IConfigurableRightsPool } from '../types/IConfigurableRightsPool';
-import { IControllerPegasysEcosystemReserve } from '../types/IControllerPegasysEcosystemReserve';
+import { IControllerRollexEcosystemReserve } from '../types/IControllerRollexEcosystemReserve';
 import { SelfdestructTransfer } from '../types/SelfdestructTransfer';
 import { IBPool } from '../types/IBPool'; // Balance pool
-import { PegasysStakingHelper } from '../types/PegasysStakingHelper';
+import { RollexStakingHelper } from '../types/RollexStakingHelper';
 import { StakeUIHelper } from '../types/StakeUIHelper';
 import { IERC20Detailed } from '../types/IERC20Detailed';
 import { InitializableAdminUpgradeabilityProxy } from '../types/InitializableAdminUpgradeabilityProxy';
-import { PegasysIncentivesController } from '../types/PegasysIncentivesController';
+import { RollexIncentivesController } from '../types/RollexIncentivesController';
 import { MockTransferHook } from '../types/MockTransferHook';
 import { verifyContract } from './etherscan-verification';
 import { ATokenMock } from '../types/ATokenMock';
@@ -28,7 +28,7 @@ import {
   StakedTokenV3Rev3,
 } from '../types';
 
-export const deployStakedPSYS = async (
+export const deployStakedREX = async (
   [
     stakedToken,
     rewardsToken,
@@ -48,7 +48,7 @@ export const deployStakedPSYS = async (
   ],
   verify?: boolean
 ) => {
-  const id = eContractid.StakedPSYS;
+  const id = eContractid.StakedREX;
   const args: string[] = [
     stakedToken,
     rewardsToken,
@@ -59,14 +59,14 @@ export const deployStakedPSYS = async (
     distributionDuration,
   ];
 
-  const instance = await deployContract<StakedPSYS>(id, args);
+  const instance = await deployContract<StakedREX>(id, args);
   if (verify) {
     await verifyContract(instance.address, args);
   }
   return instance;
 };
 
-export const deployStakedPSYSV3 = async (
+export const deployStakedREXV3 = async (
   [
     stakedToken,
     rewardsToken,
@@ -88,7 +88,7 @@ export const deployStakedPSYSV3 = async (
   ],
   verify?: boolean
 ) => {
-  const id = eContractid.StakedPSYSV3;
+  const id = eContractid.StakedREXV3;
   const args: string[] = [
     stakedToken,
     rewardsToken,
@@ -99,7 +99,7 @@ export const deployStakedPSYSV3 = async (
     distributionDuration,
     governance, // gov address
   ];
-  const instance = await deployContract<StakedPSYSV3>(id, args);
+  const instance = await deployContract<StakedREXV3>(id, args);
   if (verify) {
     await verifyContract(instance.address, args);
   }
@@ -206,8 +206,8 @@ export const deployStakedTokenBptRevision2 = async (
   return instance;
 };
 
-export const deployPegasysIncentivesController = async (
-  [rewardToken, rewardsVault, pegasyspsm, extraPsmReward, emissionManager, distributionDuration]: [
+export const deployRollexIncentivesController = async (
+  [rewardToken, rewardsVault, rollexpsm, extraPsmReward, emissionManager, distributionDuration]: [
     tEthereumAddress,
     tEthereumAddress,
     tEthereumAddress,
@@ -217,16 +217,16 @@ export const deployPegasysIncentivesController = async (
   ],
   verify?: boolean
 ) => {
-  const id = eContractid.PegasysIncentivesController;
+  const id = eContractid.RollexIncentivesController;
   const args: string[] = [
     rewardToken,
     rewardsVault,
-    pegasyspsm,
+    rollexpsm,
     extraPsmReward,
     emissionManager,
     distributionDuration,
   ];
-  const instance = await deployContract<PegasysIncentivesController>(id, args);
+  const instance = await deployContract<RollexIncentivesController>(id, args);
   await instance.deployTransaction.wait();
   if (verify) {
     await verifyContract(instance.address, args);
@@ -262,9 +262,9 @@ export const deployMockTransferHook = async () =>
 export const deployATokenMock = async (aicAddress: tEthereumAddress, slug: string) =>
   await deployContract<ATokenMock>(eContractid.ATokenMock, [aicAddress], slug);
 
-export const deployDoubleTransferHelper = async (psysToken: tEthereumAddress, verify?: boolean) => {
+export const deployDoubleTransferHelper = async (rexToken: tEthereumAddress, verify?: boolean) => {
   const id = eContractid.DoubleTransferHelper;
-  const args = [psysToken];
+  const args = [rexToken];
   const instance = await deployContract<DoubleTransferHelper>(id, args);
   await instance.deployTransaction.wait();
   if (verify) {
@@ -275,31 +275,28 @@ export const deployDoubleTransferHelper = async (psysToken: tEthereumAddress, ve
 
 export const getMintableErc20 = getContractFactory<MintableErc20>(eContractid.MintableErc20);
 
-export const getStakedPSYS = getContractFactory<StakedPSYS>(eContractid.StakedPSYS);
-export const getStakedPSYSV3 = getContractFactory<StakedPSYSV3>(eContractid.StakedPSYSV3);
+export const getStakedREX = getContractFactory<StakedREX>(eContractid.StakedREX);
+export const getStakedREXV3 = getContractFactory<StakedREXV3>(eContractid.StakedREXV3);
 
-export const getStakedPSYSProxy = async (address?: tEthereumAddress) => {
+export const getStakedREXProxy = async (address?: tEthereumAddress) => {
   return await getContract<InitializableAdminUpgradeabilityProxy>(
     eContractid.InitializableAdminUpgradeabilityProxy,
-    address ||
-      (
-        await getDb().get(`${eContractid.StakedPSYSV3}.${DRE.network.name}`).value()
-      ).address
+    address || (await getDb().get(`${eContractid.StakedREXV3}.${DRE.network.name}`).value()).address
   );
 };
 
-export const getStakedPSYSImpl = async (address?: tEthereumAddress) => {
-  return await getContract<StakedPSYSV3>(
-    eContractid.StakedPSYSV3,
+export const getStakedREXImpl = async (address?: tEthereumAddress) => {
+  return await getContract<StakedREXV3>(
+    eContractid.StakedREXV3,
     address ||
       (
-        await getDb().get(`${eContractid.StakedPSYSImpl}.${DRE.network.name}`).value()
+        await getDb().get(`${eContractid.StakedREXImpl}.${DRE.network.name}`).value()
       ).address
   );
 };
 
 export const getStakedTokenV3 = async (address?: tEthereumAddress) => {
-  return await getContract<StakedPSYSV3>(
+  return await getContract<StakedREXV3>(
     eContractid.StakedTokenV3,
     address ||
       (
@@ -308,8 +305,8 @@ export const getStakedTokenV3 = async (address?: tEthereumAddress) => {
   );
 };
 
-export const getPegasysIncentivesController = getContractFactory<PegasysIncentivesController>(
-  eContractid.PegasysIncentivesController
+export const getRollexIncentivesController = getContractFactory<RollexIncentivesController>(
+  eContractid.RollexIncentivesController
 );
 
 export const getIErc20Detailed = getContractFactory<IERC20Detailed>(eContractid.IERC20Detailed);
@@ -329,8 +326,8 @@ export const getERC20Contract = (address: tEthereumAddress) =>
   getContract<MintableErc20>(eContractid.MintableErc20, address);
 
 export const getController = (address: tEthereumAddress) =>
-  getContract<IControllerPegasysEcosystemReserve>(
-    eContractid.IControllerPegasysEcosystemReserve,
+  getContract<IControllerRollexEcosystemReserve>(
+    eContractid.IControllerRollexEcosystemReserve,
     address
   );
 
@@ -341,14 +338,14 @@ export const deploySelfDestruct = async () => {
   return instance;
 };
 
-export const deployPegasysStakingHelper = async (
-  [addressStake, addressPegasys]: [tEthereumAddress, tEthereumAddress],
+export const deployRollexStakingHelper = async (
+  [addressStake, addressRollex]: [tEthereumAddress, tEthereumAddress],
   verify?: boolean
 ) => {
-  const id = eContractid.PegasysStakingHelper;
-  const args: string[] = [addressStake, addressPegasys];
+  const id = eContractid.RollexStakingHelper;
+  const args: string[] = [addressStake, addressRollex];
 
-  const instance = await deployContract<PegasysStakingHelper>(id, args);
+  const instance = await deployContract<RollexStakingHelper>(id, args);
   if (verify) {
     await verifyContract(instance.address, args);
   }
@@ -356,7 +353,7 @@ export const deployPegasysStakingHelper = async (
 };
 
 export const deployStakeUIHelper = async (
-  [priceOracle, bptPriceFeed, psys, stkPSYS, bpt, stkBpt]: [
+  [priceOracle, bptPriceFeed, rex, stkREX, bpt, stkBpt]: [
     tEthereumAddress,
     tEthereumAddress,
     tEthereumAddress,
@@ -367,7 +364,7 @@ export const deployStakeUIHelper = async (
   verify?: boolean
 ) => {
   const id = eContractid.StakeUIHelper;
-  const args: string[] = [priceOracle, bptPriceFeed, psys, stkPSYS, bpt, stkBpt];
+  const args: string[] = [priceOracle, bptPriceFeed, rex, stkREX, bpt, stkBpt];
 
   const instance = await deployContract<StakeUIHelper>(id, args);
   if (verify) {

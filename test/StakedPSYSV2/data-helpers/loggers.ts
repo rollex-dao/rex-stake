@@ -1,40 +1,34 @@
 import { tEthereumAddress } from '../../../helpers/types';
 import { MintableErc20 } from '../../../types/MintableErc20';
-import { StakedPSYS } from '../../../types/StakedPSYS';
+import { StakedREX } from '../../../types/StakedREX';
 
-export const logPSYStokenBalanceOf = async (
-  account: tEthereumAddress,
-  psysToken: MintableErc20
-) => {
+export const logREXtokenBalanceOf = async (account: tEthereumAddress, rexToken: MintableErc20) => {
   console.log(
-    `[psysToken.balanceOf(${account})]: ${(await psysToken.balanceOf(account)).toString()}`
+    `[rexToken.balanceOf(${account})]: ${(await rexToken.balanceOf(account)).toString()}`
   );
 };
 
-export const logStakedPSYSBalanceOf = async (
-  staker: tEthereumAddress,
-  StakedPSYSV3: StakedPSYS
-) => {
+export const logStakedREXBalanceOf = async (staker: tEthereumAddress, StakedREXV3: StakedREX) => {
   console.log(
-    `[StakedPSYSV3.balanceOf(${staker})]: ${(await StakedPSYSV3.balanceOf(staker)).toString()}`
+    `[StakedREXV3.balanceOf(${staker})]: ${(await StakedREXV3.balanceOf(staker)).toString()}`
   );
 };
 
 export const logGetStakeTotalRewardsBalance = async (
   staker: tEthereumAddress,
-  StakedPSYSV3: StakedPSYS
+  StakedREXV3: StakedREX
 ) => {
   console.log(
-    `[StakedPSYSV3.getTotalRewardsBalance(${staker})]: ${(
-      await StakedPSYSV3.getTotalRewardsBalance(staker)
+    `[StakedREXV3.getTotalRewardsBalance(${staker})]: ${(
+      await StakedREXV3.getTotalRewardsBalance(staker)
     ).toString()}`
   );
 };
 
-export const logRewardPerStakedPSYS = async (StakedPSYSV3: StakedPSYS) => {
+export const logRewardPerStakedREX = async (StakedREXV3: StakedREX) => {
   console.log(
-    `[StakedPSYSV3.getRewardPerStakedPSYS()]: ${(
-      await StakedPSYSV3.getRewardPerStakedPSYS()
+    `[StakedREXV3.getRewardPerStakedREX()]: ${(
+      await StakedREXV3.getRewardPerStakedREX()
     ).toString()}`
   );
 };
