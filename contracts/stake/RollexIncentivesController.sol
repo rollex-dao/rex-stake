@@ -7,25 +7,25 @@ import {SafeMath} from '../lib/SafeMath.sol';
 
 import {IERC20} from '../interfaces/IERC20.sol';
 import {IAToken} from '../interfaces/IAToken.sol';
-import {IPegasysIncentivesController} from '../interfaces/IPegasysIncentivesController.sol';
-import {IStakedPSYS} from '../interfaces/IStakedPSYS.sol';
+import {IRollexIncentivesController} from '../interfaces/IRollexIncentivesController.sol';
+import {IStakedREX} from '../interfaces/IStakedREX.sol';
 import {VersionedInitializable} from '../utils/VersionedInitializable.sol';
-import {PegasysDistributionManager} from './PegasysDistributionManager.sol';
+import {RollexDistributionManager} from './RollexDistributionManager.sol';
 
 /**
- * @title PegasysIncentivesController
- * @notice Distributor contract for rewards to the Pegasys protocol
- * @author Pegasys team
+ * @title RollexIncentivesController
+ * @notice Distributor contract for rewards to the Rollex protocol
+ * @author Rollex team
  **/
-contract PegasysIncentivesController is
-  IPegasysIncentivesController,
+contract RollexIncentivesController is
+  IRollexIncentivesController,
   VersionedInitializable,
-  PegasysDistributionManager
+  RollexDistributionManager
 {
   using SafeMath for uint256;
   uint256 public constant REVISION = 1;
 
-  IStakedPSYS public immutable PSM;
+  IStakedREX public immutable PSM;
 
   IERC20 public immutable REWARD_TOKEN;
   address public immutable REWARDS_VAULT;
@@ -39,11 +39,11 @@ contract PegasysIncentivesController is
   constructor(
     IERC20 rewardToken,
     address rewardsVault,
-    IStakedPSYS psm,
+    IStakedREX psm,
     uint256 extraPsmReward,
     address emissionManager,
     uint128 distributionDuration
-  ) public PegasysDistributionManager(emissionManager, distributionDuration) {
+  ) public RollexDistributionManager(emissionManager, distributionDuration) {
     REWARD_TOKEN = rewardToken;
     REWARDS_VAULT = rewardsVault;
     PSM = psm;

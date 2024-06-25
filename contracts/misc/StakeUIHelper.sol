@@ -13,8 +13,8 @@ contract StakeUIHelper is StakeUIHelperI {
   IPriceOracle public immutable PRICE_ORACLE;
   BPTPriceFeedI public immutable BPT_PRICE_FEED;
 
-  address public immutable PSYS;
-  IStakedToken public immutable STAKED_PSYS;
+  address public immutable REX;
+  IStakedToken public immutable STAKED_REX;
 
   address public immutable BPT;
   IStakedToken public immutable STAKED_BPT;
@@ -28,16 +28,16 @@ contract StakeUIHelper is StakeUIHelperI {
   constructor(
     IPriceOracle priceOracle,
     BPTPriceFeedI bptPriceFeed,
-    address psys,
-    IStakedToken stkPSYS,
+    address rex,
+    IStakedToken stkREX,
     address bpt,
     IStakedToken stkBpt
   ) public {
     PRICE_ORACLE = priceOracle;
     BPT_PRICE_FEED = bptPriceFeed;
 
-    PSYS = psys;
-    STAKED_PSYS = stkPSYS;
+    REX = rex;
+    STAKED_REX = stkREX;
 
     BPT = bpt;
     STAKED_BPT = stkBpt;
@@ -101,7 +101,7 @@ contract StakeUIHelper is StakeUIHelperI {
     data.stakeTokenTotalSupply = stakeToken.totalSupply();
     data.stakeCooldownSeconds = stakeToken.COOLDOWN_SECONDS();
     data.stakeUnstakeWindow = stakeToken.UNSTAKE_WINDOW();
-    data.rewardTokenPriceEth = PRICE_ORACLE.getAssetPrice(PSYS);
+    data.rewardTokenPriceEth = PRICE_ORACLE.getAssetPrice(REX);
     data.distributionEnd = stakeToken.DISTRIBUTION_END();
     if (block.timestamp < data.distributionEnd) {
       data.distributionPerSecond = stakeToken.assets(address(stakeToken)).emissionPerSecond;
@@ -118,8 +118,8 @@ contract StakeUIHelper is StakeUIHelperI {
     return (distributionPerSecond * SECONDS_PER_YEAR * APY_PRECISION) / stakeTokenTotalSupply;
   }
 
-  function getstkPSYSData(address user) public view override returns (AssetUIData memory) {
-    AssetUIData memory data = _getUserAndGeneralStakedAssetData(STAKED_PSYS, PSYS, user, false);
+  function getstkREXData(address user) public view override returns (AssetUIData memory) {
+    AssetUIData memory data = _getUserAndGeneralStakedAssetData(STAKED_REX, REX, user, false);
 
     data.stakeTokenPriceEth = data.rewardTokenPriceEth;
     data.stakeApy = _calculateApy(data.distributionPerSecond, data.stakeTokenTotalSupply);
@@ -140,8 +140,8 @@ contract StakeUIHelper is StakeUIHelperI {
     return data;
   }
 
-  function getStkGeneralPSYSData() public view override returns (GeneralStakeUIData memory) {
-    GeneralStakeUIData memory data = _getGeneralStakedAssetData(STAKED_PSYS);
+  function getStkGeneralREXData() public view override returns (GeneralStakeUIData memory) {
+    GeneralStakeUIData memory data = _getGeneralStakedAssetData(STAKED_REX);
 
     data.stakeTokenPriceEth = data.rewardTokenPriceEth;
     data.stakeApy = _calculateApy(data.distributionPerSecond, data.stakeTokenTotalSupply);
@@ -162,8 +162,8 @@ contract StakeUIHelper is StakeUIHelperI {
     return data;
   }
 
-  function getStkUserPSYSData(address user) public view override returns (UserStakeUIData memory) {
-    UserStakeUIData memory data = _getUserStakedAssetData(STAKED_PSYS, PSYS, user, false);
+  function getStkUserREXData(address user) public view override returns (UserStakeUIData memory) {
+    UserStakeUIData memory data = _getUserStakedAssetData(STAKED_REX, REX, user, false);
     return data;
   }
 
@@ -176,7 +176,7 @@ contract StakeUIHelper is StakeUIHelperI {
     address user
   ) external view override returns (AssetUIData memory, AssetUIData memory emptyData, uint256) {
     return (
-      getstkPSYSData(user),
+      getstkREXData(user),
       emptyData,
       USD_BASE / PRICE_ORACLE.getAssetPrice(MOCK_USD_ADDRESS)
     );
@@ -189,7 +189,7 @@ contract StakeUIHelper is StakeUIHelperI {
     returns (GeneralStakeUIData memory, GeneralStakeUIData memory emptyData, uint256)
   {
     return (
-      getStkGeneralPSYSData(),
+      getStkGeneralREXData(),
       emptyData,
       USD_BASE / PRICE_ORACLE.getAssetPrice(MOCK_USD_ADDRESS)
     );
@@ -204,7 +204,7 @@ contract StakeUIHelper is StakeUIHelperI {
     returns (UserStakeUIData memory, UserStakeUIData memory emptyData, uint256)
   {
     return (
-      getStkUserPSYSData(user),
+      getStkUserREXData(user),
       emptyData,
       USD_BASE / PRICE_ORACLE.getAssetPrice(MOCK_USD_ADDRESS)
     );

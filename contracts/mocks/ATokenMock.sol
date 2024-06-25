@@ -2,12 +2,12 @@
 pragma solidity 0.7.5;
 pragma experimental ABIEncoderV2;
 
-import {IPegasysIncentivesController} from '../interfaces/IPegasysIncentivesController.sol';
+import {IRollexIncentivesController} from '../interfaces/IRollexIncentivesController.sol';
 import {DistributionTypes} from '../lib/DistributionTypes.sol';
 import {IAToken} from '../interfaces/IAToken.sol';
 
 contract ATokenMock is IAToken {
-  IPegasysIncentivesController public _aic;
+  IRollexIncentivesController public _aic;
   uint256 internal _userBalance;
   uint256 internal _totalSupply;
 
@@ -19,7 +19,7 @@ contract ATokenMock is IAToken {
   event AssetIndexUpdated(address indexed asset, uint256 index);
   event UserIndexUpdated(address indexed user, address indexed asset, uint256 index);
 
-  constructor(IPegasysIncentivesController aic) public {
+  constructor(IRollexIncentivesController aic) public {
     _aic = aic;
   }
 

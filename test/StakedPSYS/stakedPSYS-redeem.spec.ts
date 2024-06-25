@@ -12,59 +12,59 @@ import BigNumber from 'bignumber.js';
 
 const { expect } = require('chai');
 
-makeSuite('StakedPSYS. Redeem', (testEnv: TestEnv) => {
+makeSuite('StakedREX. Redeem', (testEnv: TestEnv) => {
   it('Reverts trying to redeem 0 amount', async () => {
-    const { StakedPSYS, users } = testEnv;
+    const { StakedREX, users } = testEnv;
 
     const amount = '0';
     const staker = users[1];
 
     await expect(
-      StakedPSYS.connect(staker.signer).redeem(staker.address, amount)
+      StakedREX.connect(staker.signer).redeem(staker.address, amount)
     ).to.be.revertedWith('INVALID_ZERO_AMOUNT');
   });
 
-  it('User 1 stakes 50 PSYS', async () => {
-    const { StakedPSYS, psysToken, users } = testEnv;
+  it('User 1 stakes 50 REX', async () => {
+    const { StakedREX, rexToken, users } = testEnv;
     const amount = ethers.utils.parseEther('50');
     const staker = users[1];
 
-    await waitForTx(await psysToken.connect(staker.signer).approve(StakedPSYS.address, amount));
-    await waitForTx(await StakedPSYS.connect(staker.signer).stake(staker.address, amount));
+    await waitForTx(await rexToken.connect(staker.signer).approve(StakedREX.address, amount));
+    await waitForTx(await StakedREX.connect(staker.signer).stake(staker.address, amount));
   });
 
   it('User 1 tries to redeem without activating the cooldown first', async () => {
-    const { StakedPSYS, users } = testEnv;
+    const { StakedREX, users } = testEnv;
     const amount = ethers.utils.parseEther('50');
     const staker = users[1];
 
     await expect(
-      StakedPSYS.connect(staker.signer).redeem(staker.address, amount)
+      StakedREX.connect(staker.signer).redeem(staker.address, amount)
     ).to.be.revertedWith('UNSTAKE_WINDOW_FINISHED');
   });
 
   it('User 1 activates the cooldown, but is not able to redeem before the COOLDOWN_SECONDS passed', async () => {
-    const { StakedPSYS, users } = testEnv;
+    const { StakedREX, users } = testEnv;
     const amount = ethers.utils.parseEther('50');
     const staker = users[1];
 
-    await StakedPSYS.connect(staker.signer).cooldown();
+    await StakedREX.connect(staker.signer).cooldown();
 
     const startedCooldownAt = new BigNumber(
-      await (await StakedPSYS.stakersCooldowns(staker.address)).toString()
+      await (await StakedREX.stakersCooldowns(staker.address)).toString()
     );
     const currentTime = await timeLatest();
 
     const remainingCooldown = startedCooldownAt.plus(COOLDOWN_SECONDS).minus(currentTime);
     await increaseTimeAndMine(Number(remainingCooldown.dividedBy('2').toString()));
     await expect(
-      StakedPSYS.connect(staker.signer).redeem(staker.address, amount)
+      StakedREX.connect(staker.signer).redeem(staker.address, amount)
     ).to.be.revertedWith('INSUFFICIENT_COOLDOWN');
 
     await advanceBlock(startedCooldownAt.plus(new BigNumber(COOLDOWN_SECONDS).minus(1)).toNumber()); // We fast-forward time to just before COOLDOWN_SECONDS
 
     await expect(
-      StakedPSYS.connect(staker.signer).redeem(staker.address, amount)
+      StakedREX.connect(staker.signer).redeem(staker.address, amount)
     ).to.be.revertedWith('INSUFFICIENT_COOLDOWN');
 
     await advanceBlock(
@@ -74,69 +74,69 @@ makeSuite('StakedPSYS. Redeem', (testEnv: TestEnv) => {
     ); // We fast-forward time to just after the unstake window
 
     await expect(
-      StakedPSYS.connect(staker.signer).redeem(staker.address, amount)
+      StakedREX.connect(staker.signer).redeem(staker.address, amount)
     ).to.be.revertedWith('UNSTAKE_WINDOW_FINISHED');
   });
 
   it('User 1 activates the cooldown again, and tries to redeem a bigger amount that he has staked, receiving the balance', async () => {
-    const { StakedPSYS, psysToken, users } = testEnv;
+    const { StakedREX, rexToken, users } = testEnv;
     const amount = ethers.utils.parseEther('1000');
     const staker = users[1];
 
-    await StakedPSYS.connect(staker.signer).cooldown();
+    await StakedREX.connect(staker.signer).cooldown();
     const startedCooldownAt = new BigNumber(
-      await (await StakedPSYS.stakersCooldowns(staker.address)).toString()
+      await (await StakedREX.stakersCooldowns(staker.address)).toString()
     );
     const currentTime = await timeLatest();
 
     const remainingCooldown = startedCooldownAt.plus(COOLDOWN_SECONDS).minus(currentTime);
 
     await increaseTimeAndMine(remainingCooldown.plus(1).toNumber());
-    const PSYSBalanceBefore = new BigNumber((await psysToken.balanceOf(staker.address)).toString());
-    const StakedPSYSBalanceBefore = (await StakedPSYS.balanceOf(staker.address)).toString();
-    await StakedPSYS.connect(staker.signer).redeem(staker.address, amount);
-    const PSYSBalanceAfter = new BigNumber((await psysToken.balanceOf(staker.address)).toString());
-    const StakedPSYSBalanceAfter = (await StakedPSYS.balanceOf(staker.address)).toString();
-    expect(PSYSBalanceAfter.minus(StakedPSYSBalanceBefore).toString()).to.be.equal(
-      PSYSBalanceBefore.toString()
+    const REXBalanceBefore = new BigNumber((await rexToken.balanceOf(staker.address)).toString());
+    const StakedREXBalanceBefore = (await StakedREX.balanceOf(staker.address)).toString();
+    await StakedREX.connect(staker.signer).redeem(staker.address, amount);
+    const REXBalanceAfter = new BigNumber((await rexToken.balanceOf(staker.address)).toString());
+    const StakedREXBalanceAfter = (await StakedREX.balanceOf(staker.address)).toString();
+    expect(REXBalanceAfter.minus(StakedREXBalanceBefore).toString()).to.be.equal(
+      REXBalanceBefore.toString()
     );
-    expect(StakedPSYSBalanceAfter).to.be.equal('0');
+    expect(StakedREXBalanceAfter).to.be.equal('0');
   });
 
   it('User 1 activates the cooldown again, and redeems within the unstake period', async () => {
-    const { StakedPSYS, psysToken, users } = testEnv;
+    const { StakedREX, rexToken, users } = testEnv;
     const amount = ethers.utils.parseEther('50');
     const staker = users[1];
 
-    await waitForTx(await psysToken.connect(staker.signer).approve(StakedPSYS.address, amount));
-    await waitForTx(await StakedPSYS.connect(staker.signer).stake(staker.address, amount));
+    await waitForTx(await rexToken.connect(staker.signer).approve(StakedREX.address, amount));
+    await waitForTx(await StakedREX.connect(staker.signer).stake(staker.address, amount));
 
-    await StakedPSYS.connect(staker.signer).cooldown();
+    await StakedREX.connect(staker.signer).cooldown();
     const startedCooldownAt = new BigNumber(
-      await (await StakedPSYS.stakersCooldowns(staker.address)).toString()
+      await (await StakedREX.stakersCooldowns(staker.address)).toString()
     );
     const currentTime = await timeLatest();
 
     const remainingCooldown = startedCooldownAt.plus(COOLDOWN_SECONDS).minus(currentTime);
 
     await increaseTimeAndMine(remainingCooldown.plus(1).toNumber());
-    const PSYSBalanceBefore = new BigNumber((await psysToken.balanceOf(staker.address)).toString());
-    await StakedPSYS.connect(staker.signer).redeem(staker.address, amount);
-    const PSYSBalanceAfter = new BigNumber((await psysToken.balanceOf(staker.address)).toString());
-    expect(PSYSBalanceAfter.minus(amount.toString()).toString()).to.be.equal(
-      PSYSBalanceBefore.toString()
+    const REXBalanceBefore = new BigNumber((await rexToken.balanceOf(staker.address)).toString());
+    await StakedREX.connect(staker.signer).redeem(staker.address, amount);
+    const REXBalanceAfter = new BigNumber((await rexToken.balanceOf(staker.address)).toString());
+    expect(REXBalanceAfter.minus(amount.toString()).toString()).to.be.equal(
+      REXBalanceBefore.toString()
     );
   });
 
-  it('User 4 stakes 50 PSYS, activates the cooldown and redeems half of the amount', async () => {
-    const { StakedPSYS, psysToken, users } = testEnv;
+  it('User 4 stakes 50 REX, activates the cooldown and redeems half of the amount', async () => {
+    const { StakedREX, rexToken, users } = testEnv;
     const amount = ethers.utils.parseEther('50');
     const staker = users[5];
 
-    await waitForTx(await psysToken.connect(staker.signer).approve(StakedPSYS.address, amount));
-    await waitForTx(await StakedPSYS.connect(staker.signer).stake(staker.address, amount));
+    await waitForTx(await rexToken.connect(staker.signer).approve(StakedREX.address, amount));
+    await waitForTx(await StakedREX.connect(staker.signer).stake(staker.address, amount));
 
-    await StakedPSYS.connect(staker.signer).cooldown();
+    await StakedREX.connect(staker.signer).cooldown();
 
     const cooldownActivationTimestamp = await timeLatest();
 
@@ -144,26 +144,26 @@ makeSuite('StakedPSYS. Redeem', (testEnv: TestEnv) => {
       cooldownActivationTimestamp.plus(new BigNumber(COOLDOWN_SECONDS).plus(1)).toNumber()
     );
 
-    const PSYSBalanceBefore = new BigNumber((await psysToken.balanceOf(staker.address)).toString());
-    await StakedPSYS.connect(staker.signer).redeem(
+    const REXBalanceBefore = new BigNumber((await rexToken.balanceOf(staker.address)).toString());
+    await StakedREX.connect(staker.signer).redeem(
       staker.address,
       ethers.utils.parseEther('50').div(2)
     );
-    const PSYSBalanceAfter = new BigNumber((await psysToken.balanceOf(staker.address)).toString());
-    expect(PSYSBalanceAfter.minus(amount.toString()).toString()).to.be.equal(
-      PSYSBalanceBefore.div(2).toFixed()
+    const REXBalanceAfter = new BigNumber((await rexToken.balanceOf(staker.address)).toString());
+    expect(REXBalanceAfter.minus(amount.toString()).toString()).to.be.equal(
+      REXBalanceBefore.div(2).toFixed()
     );
   });
 
-  it('User 5 stakes 50 PSYS, activates the cooldown and redeems with rewards not enabled', async () => {
-    const { StakedPSYS, psysToken, users } = testEnv;
+  it('User 5 stakes 50 REX, activates the cooldown and redeems with rewards not enabled', async () => {
+    const { StakedREX, rexToken, users } = testEnv;
     const amount = ethers.utils.parseEther('50');
     const staker = users[5];
 
-    await waitForTx(await psysToken.connect(staker.signer).approve(StakedPSYS.address, amount));
-    await waitForTx(await StakedPSYS.connect(staker.signer).stake(staker.address, amount));
+    await waitForTx(await rexToken.connect(staker.signer).approve(StakedREX.address, amount));
+    await waitForTx(await StakedREX.connect(staker.signer).stake(staker.address, amount));
 
-    await StakedPSYS.connect(staker.signer).cooldown();
+    await StakedREX.connect(staker.signer).cooldown();
 
     const cooldownActivationTimestamp = await timeLatest();
 
@@ -171,11 +171,11 @@ makeSuite('StakedPSYS. Redeem', (testEnv: TestEnv) => {
       cooldownActivationTimestamp.plus(new BigNumber(COOLDOWN_SECONDS).plus(1)).toNumber()
     );
 
-    const PSYSBalanceBefore = new BigNumber((await psysToken.balanceOf(staker.address)).toString());
-    await StakedPSYS.connect(staker.signer).redeem(staker.address, amount);
-    const PSYSBalanceAfter = new BigNumber((await psysToken.balanceOf(staker.address)).toString());
-    expect(PSYSBalanceAfter.minus(amount.toString()).toString()).to.be.equal(
-      PSYSBalanceBefore.toString()
+    const REXBalanceBefore = new BigNumber((await rexToken.balanceOf(staker.address)).toString());
+    await StakedREX.connect(staker.signer).redeem(staker.address, amount);
+    const REXBalanceAfter = new BigNumber((await rexToken.balanceOf(staker.address)).toString());
+    expect(REXBalanceAfter.minus(amount.toString()).toString()).to.be.equal(
+      REXBalanceBefore.toString()
     );
   });
 });

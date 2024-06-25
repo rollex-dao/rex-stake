@@ -3,7 +3,7 @@ pragma solidity 0.7.5;
 pragma abicoder v2;
 
 // simplified interface to expose functions added events for tests
-interface IPegasysGovernanceV2 {
+interface IRollexGovernanceV2 {
   struct Vote {
     bool support;
     uint248 votingPower;

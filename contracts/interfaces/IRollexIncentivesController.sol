@@ -2,7 +2,7 @@
 pragma solidity 0.7.5;
 pragma experimental ABIEncoderV2;
 
-interface IPegasysIncentivesController {
+interface IRollexIncentivesController {
   function handleAction(address asset, uint256 userBalance, uint256 totalSupply) external;
 
   function getRewardsBalance(

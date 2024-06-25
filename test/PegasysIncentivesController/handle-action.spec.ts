@@ -50,7 +50,7 @@ const handleActionScenarios: ScenarioAction[] = [
   },
 ];
 
-makeSuite('PegasysIncentivesController handleAction tests', (testEnv) => {
+makeSuite('RollexIncentivesController handleAction tests', (testEnv) => {
   for (const {
     caseName,
     totalSupply,
@@ -61,29 +61,29 @@ makeSuite('PegasysIncentivesController handleAction tests', (testEnv) => {
     it(caseName, async () => {
       await increaseTimeAndMine(100);
 
-      const { pegasysIncentivesController, users, aDaiMock } = testEnv;
+      const { rollexIncentivesController, users, aDaiMock } = testEnv;
       const userAddress = users[1].address;
       const underlyingAsset = aDaiMock.address;
 
       // update emissionPerSecond in advance to not affect user calculations
       if (emissionPerSecond) {
-        await pegasysIncentivesController.configureAssets([
+        await rollexIncentivesController.configureAssets([
           { emissionPerSecond, underlyingAsset, totalStaked: totalSupply },
         ]);
       }
 
-      const distributionEndTimestamp = await pegasysIncentivesController.DISTRIBUTION_END();
+      const distributionEndTimestamp = await rollexIncentivesController.DISTRIBUTION_END();
 
-      const rewardsBalanceBefore = await pegasysIncentivesController.getUserUnclaimedRewards(
+      const rewardsBalanceBefore = await rollexIncentivesController.getUserUnclaimedRewards(
         userAddress
       );
       const userIndexBefore = await getUserIndex(
-        pegasysIncentivesController,
+        rollexIncentivesController,
         userAddress,
         underlyingAsset
       );
       const assetDataBefore = (
-        await getAssetsData(pegasysIncentivesController, [{ underlyingAsset }])
+        await getAssetsData(rollexIncentivesController, [{ underlyingAsset }])
       )[0];
 
       if (customTimeMovement) {
@@ -97,12 +97,12 @@ makeSuite('PegasysIncentivesController handleAction tests', (testEnv) => {
       const actionBlockTimestamp = await getBlockTimestamp(handleActionReceipt.blockNumber);
 
       const userIndexAfter = await getUserIndex(
-        pegasysIncentivesController,
+        rollexIncentivesController,
         userAddress,
         underlyingAsset
       );
       const assetDataAfter = (
-        await getAssetsData(pegasysIncentivesController, [{ underlyingAsset }])
+        await getAssetsData(rollexIncentivesController, [{ underlyingAsset }])
       )[0];
 
       const expectedAccruedRewards = getRewards(
@@ -111,7 +111,7 @@ makeSuite('PegasysIncentivesController handleAction tests', (testEnv) => {
         userIndexBefore
       ).toString();
 
-      const rewardsBalanceAfter = await pegasysIncentivesController.getUserUnclaimedRewards(
+      const rewardsBalanceAfter = await rollexIncentivesController.getUserUnclaimedRewards(
         userAddress
       );
 

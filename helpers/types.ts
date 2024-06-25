@@ -11,10 +11,10 @@ export enum eEthereumNetwork {
 
 export enum eContractid {
   DistributionManager = 'DistributionManager',
-  StakedPSYS = 'StakedPSYS',
-  StakedPSYSV3 = 'StakedPSYSV3',
-  StakedPSYSImpl = 'StakedPSYSImpl',
-  PegasysIncentivesController = 'PegasysIncentivesController',
+  StakedREX = 'StakedREX',
+  StakedREXV3 = 'StakedREXV3',
+  StakedREXImpl = 'StakedREXImpl',
+  RollexIncentivesController = 'RollexIncentivesController',
   IERC20Detailed = 'IERC20Detailed',
   AdminUpgradeabilityProxy = 'AdminUpgradeabilityProxy',
   InitializableAdminUpgradeabilityProxy = 'InitializableAdminUpgradeabilityProxy',
@@ -27,11 +27,11 @@ export enum eContractid {
   StakedTokenV3 = 'StakedTokenV3',
   IConfigurableRightsPool = 'IConfigurableRightsPool',
   IBPool = 'IBPool',
-  IControllerPegasysEcosystemReserve = 'IControllerPegasysEcosystemReserve',
+  IControllerRollexEcosystemReserve = 'IControllerRollexEcosystemReserve',
   MockSelfDestruct = 'SelfdestructTransfer',
   StakedTokenV3Rev3 = 'StakedTokenV3Rev3',
   StakedTokenBptRev2 = 'StakedTokenBptRev2',
-  PegasysStakingHelper = 'PegasysStakingHelper',
+  RollexStakingHelper = 'RollexStakingHelper',
   StakeUIHelper = 'StakeUIHelper',
   StakedTokenDataProvider = 'StakedTokenDataProvider',
 }

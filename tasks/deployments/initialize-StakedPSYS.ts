@@ -3,26 +3,29 @@ import { eContractid } from '../../helpers/types';
 import { waitForTx } from '../../helpers/misc-utils';
 import {
   ZERO_ADDRESS,
-  STAKED_PSYS_NAME,
-  STAKED_PSYS_SYMBOL,
-  STAKED_PSYS_DECIMALS,
+  STAKED_REX_NAME,
+  STAKED_REX_SYMBOL,
+  STAKED_REX_DECIMALS,
 } from '../../helpers/constants';
 import {
-  getStakedPSYSV3,
-  getStakedPSYSImpl,
-  getStakedPSYSProxy,
+  getStakedREXV3,
+  getStakedREXImpl,
+  getStakedREXProxy,
 } from '../../helpers/contracts-accessors';
 
-const { StakedPSYSV3 } = eContractid;
+const { StakedREXV3 } = eContractid;
 
-task(`initialize-${StakedPSYSV3}`, `Initialize the ${StakedPSYSV3} proxy contract`)
-  .addParam('admin', `The address to be added as an Admin role in ${StakedPSYSV3} Transparent Proxy.`)
-  .setAction(async ({ admin: pegasysAdmin }, localBRE) => {
+task(`initialize-${StakedREXV3}`, `Initialize the ${StakedREXV3} proxy contract`)
+  .addParam(
+    'admin',
+    `The address to be added as an Admin role in ${StakedREXV3} Transparent Proxy.`
+  )
+  .setAction(async ({ admin: rollexAdmin }, localBRE) => {
     await localBRE.run('set-dre');
 
-    if (!pegasysAdmin) {
+    if (!rollexAdmin) {
       throw new Error(
-        `Missing --admin parameter to add the Admin Role to ${StakedPSYSV3} Transparent Proxy`
+        `Missing --admin parameter to add the Admin Role to ${StakedREXV3} Transparent Proxy`
       );
     }
 
@@ -30,27 +33,25 @@ task(`initialize-${StakedPSYSV3}`, `Initialize the ${StakedPSYSV3} proxy contrac
       throw new Error('INVALID_CHAIN_ID');
     }
 
-    console.log(`\n- ${StakedPSYSV3} initialization`);
+    console.log(`\n- ${StakedREXV3} initialization`);
 
-    const StakedPSYSV3Impl = await getStakedPSYSImpl();
-    const StakedPSYSV3Proxy = await getStakedPSYSProxy();
+    const StakedREXV3Impl = await getStakedREXImpl();
+    const StakedREXV3Proxy = await getStakedREXProxy();
 
-    console.log('\tInitializing StakedPSYSV3');
+    console.log('\tInitializing StakedREXV3');
 
-    const encodedInitializeStakedPSYSV3 = StakedPSYSV3Impl.interface.encodeFunctionData('initialize', [
-      ZERO_ADDRESS,
-      STAKED_PSYS_NAME,
-      STAKED_PSYS_SYMBOL,
-      STAKED_PSYS_DECIMALS,
-    ]);
+    const encodedInitializeStakedREXV3 = StakedREXV3Impl.interface.encodeFunctionData(
+      'initialize',
+      [ZERO_ADDRESS, STAKED_REX_NAME, STAKED_REX_SYMBOL, STAKED_REX_DECIMALS]
+    );
 
     await waitForTx(
-      await StakedPSYSV3Proxy.functions['initialize(address,address,bytes)'](
-        StakedPSYSV3Impl.address,
-        pegasysAdmin,
-        encodedInitializeStakedPSYSV3
+      await StakedREXV3Proxy.functions['initialize(address,address,bytes)'](
+        StakedREXV3Impl.address,
+        rollexAdmin,
+        encodedInitializeStakedREXV3
       )
     );
 
-    console.log('\tFinished PSYS token and Transparent Proxy initialization');
+    console.log('\tFinished REX token and Transparent Proxy initialization');
   });

@@ -128,7 +128,7 @@ export const getContract = async <ContractType extends Contract>(
 
 export const buildPermitParams = (
   chainId: number,
-  psysToken: tEthereumAddress,
+  rexToken: tEthereumAddress,
   owner: tEthereumAddress,
   spender: tEthereumAddress,
   nonce: number,
@@ -152,10 +152,10 @@ export const buildPermitParams = (
   },
   primaryType: 'Permit' as const,
   domain: {
-    name: 'Staked PSYS',
+    name: 'Staked REX',
     version: '1',
     chainId: chainId,
-    verifyingContract: psysToken,
+    verifyingContract: rexToken,
   },
   message: {
     owner,
@@ -168,7 +168,7 @@ export const buildPermitParams = (
 
 export const buildDelegateByTypeParams = (
   chainId: number,
-  psysToken: tEthereumAddress,
+  rexToken: tEthereumAddress,
   delegatee: tEthereumAddress,
   type: string,
   nonce: string,
@@ -190,10 +190,10 @@ export const buildDelegateByTypeParams = (
   },
   primaryType: 'DelegateByType' as const,
   domain: {
-    name: 'Staked PSYS',
+    name: 'Staked REX',
     version: '1',
     chainId: chainId,
-    verifyingContract: psysToken,
+    verifyingContract: rexToken,
   },
   message: {
     delegatee,
@@ -205,7 +205,7 @@ export const buildDelegateByTypeParams = (
 
 export const buildDelegateParams = (
   chainId: number,
-  psysToken: tEthereumAddress,
+  rexToken: tEthereumAddress,
   delegatee: tEthereumAddress,
   nonce: string,
   expiry: string
@@ -225,10 +225,10 @@ export const buildDelegateParams = (
   },
   primaryType: 'Delegate' as const,
   domain: {
-    name: 'Staked PSYS',
+    name: 'Staked REX',
     version: '1',
     chainId: chainId,
-    verifyingContract: psysToken,
+    verifyingContract: rexToken,
   },
   message: {
     delegatee,

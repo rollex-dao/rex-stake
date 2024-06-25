@@ -35,20 +35,20 @@ interface IStakedTokenDataProvider {
   function ETH_USD_PRICE_FEED() external returns (address);
 
   /**
-   * @notice Return the address of the PSYS price feed, ETH denominated
-   * @return The address of the PSYS price feed, ETH denominated, expressed with 18 decimals
+   * @notice Return the address of the REX price feed, ETH denominated
+   * @return The address of the REX price feed, ETH denominated, expressed with 18 decimals
    */
-  function PSYS_USD_PRICE_FEED() external view returns (address);
+  function REX_USD_PRICE_FEED() external view returns (address);
 
   /**
-   * @notice Return the address of the Staked PSYS token
-   * @return The address of the StkPSYS token
+   * @notice Return the address of the Staked REX token
+   * @return The address of the StkREX token
    */
-  function STAKED_PSYS() external returns (address);
+  function STAKED_REX() external returns (address);
 
   /**
    * @notice Returns data of all Staked Tokens
-   * @return stkPSYSData An object with stkPSYS data
+   * @return stkREXData An object with stkREX data
    * @return stkBptData An object with StkBpt data
    * @return ethPrice The price of ETH, USD denominated (expressed with 8 decimals)
    */
@@ -56,14 +56,14 @@ interface IStakedTokenDataProvider {
     external
     view
     returns (
-      StakedTokenData memory stkPSYSData,
+      StakedTokenData memory stkREXData,
       StakedTokenData memory stkBptData,
       uint256 ethPrice
     );
 
   /**
-   * @notice Returns data of Staked PSYS
-   * @return stakedAssetData An object with stkPSYS data
+   * @notice Returns data of Staked REX
+   * @return stakedAssetData An object with stkREX data
    */
   function getStakedAssetData(
     address stakedAsset,
@@ -73,8 +73,8 @@ interface IStakedTokenDataProvider {
   /**
    * @notice Returns user data of all Staked Tokens
    * @param user The address of the user
-   * @return stkPSYSData An object with stkPSYS data
-   * @return stkPSYSUserData An object with user data of stkPSYS
+   * @return stkREXData An object with stkREX data
+   * @return stkREXUserData An object with user data of stkREX
    * @return stkBptData An object with StkBpt data
    * @return stkBptUserData An object with user data of StkBpt
    * @return ethPrice The price of ETH, USD denominated (expressed with 8 decimals)
@@ -85,23 +85,23 @@ interface IStakedTokenDataProvider {
     external
     view
     returns (
-      StakedTokenData memory stkPSYSData,
-      StakedTokenUserData memory stkPSYSUserData,
+      StakedTokenData memory stkREXData,
+      StakedTokenUserData memory stkREXUserData,
       StakedTokenData memory stkBptData,
       StakedTokenUserData memory stkBptUserData,
       uint256 ethPrice
     );
 
   /**
-   * @notice Returns user data of Staked PSYS
+   * @notice Returns user data of Staked REX
    * @param user The address of the user
-   * @return stkPSYSData An object with stkPSYS data
-   * @return stkPSYSUserData An object with user data of stkPSYS
+   * @return stkREXData An object with stkREX data
+   * @return stkREXUserData An object with user data of stkREX
    */
-  function getstkPSYSUserData(
+  function getstkREXUserData(
     address user
   )
     external
     view
-    returns (StakedTokenData memory stkPSYSData, StakedTokenUserData memory stkPSYSUserData);
+    returns (StakedTokenData memory stkREXData, StakedTokenUserData memory stkREXUserData);
 }

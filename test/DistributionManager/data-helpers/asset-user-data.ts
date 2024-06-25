@@ -1,8 +1,8 @@
 import { BigNumber } from 'ethers';
-import { PegasysDistributionManager } from '../../../types/PegasysDistributionManager';
-import { StakedPSYS } from '../../../types/StakedPSYS';
-import { PegasysIncentivesController } from '../../../types/PegasysIncentivesController';
-import { StakedPSYSV3 } from '../../../types/StakedPSYSV3';
+import { RollexDistributionManager } from '../../../types/RollexDistributionManager';
+import { StakedREX } from '../../../types/StakedREX';
+import { RollexIncentivesController } from '../../../types/RollexIncentivesController';
+import { StakedREXV3 } from '../../../types/StakedREXV3';
 
 export type UserStakeInput = {
   underlyingAsset: string;
@@ -15,10 +15,10 @@ export type UserPositionUpdate = UserStakeInput & {
 };
 export async function getUserIndex(
   distributionManager:
-    | PegasysDistributionManager
-    | PegasysIncentivesController
-    | StakedPSYS
-    | StakedPSYSV3,
+    | RollexDistributionManager
+    | RollexIncentivesController
+    | StakedREX
+    | StakedREXV3,
   user: string,
   asset: string
 ): Promise<BigNumber> {

@@ -11,34 +11,29 @@ const { StakedTokenDataProvider, StakedTokenV3Rev3 } = eContractid;
 task(`deploy-${StakedTokenDataProvider}`, `Deploys the ${StakedTokenDataProvider} contract`)
   .addParam('stkPsys', `The address of the ${StakedTokenV3Rev3} contract`)
   .addParam('ethOracle', 'The address of the eth price feed contract')
-  .addParam('psysOracle', 'The address of the psys price feed contract')
-  .addFlag('verify', 'Verify StakedPSYSV3 contract via Etherscan API.')
+  .addParam('rexOracle', 'The address of the rex price feed contract')
+  .addFlag('verify', 'Verify StakedREXV3 contract via Etherscan API.')
   .setAction(
     async (
-      {
-        stkPsys: stkPSYSAddress,
-        ethOracle: ethOracleAddress,
-        psysOracle: psysOracleAddress,
-        verify,
-      },
+      { stkPsys: stkREXAddress, ethOracle: ethOracleAddress, rexOracle: rexOracleAddress, verify },
       localBRE
     ) => {
       await localBRE.run('set-dre');
       if (verify) {
         checkVerification();
       }
-      if (!stkPSYSAddress || getAddress(stkPSYSAddress) === ZERO_ADDRESS) {
-        throw `address of stkPSYS contract is invalid`;
+      if (!stkREXAddress || getAddress(stkREXAddress) === ZERO_ADDRESS) {
+        throw `address of stkREX contract is invalid`;
       }
       if (!ethOracleAddress || getAddress(ethOracleAddress) === ZERO_ADDRESS) {
         throw `address of ethOracle contract is invalid`;
       }
-      if (!psysOracleAddress || getAddress(psysOracleAddress) === ZERO_ADDRESS) {
-        throw `address of psysOracle contract is invalid`;
+      if (!rexOracleAddress || getAddress(rexOracleAddress) === ZERO_ADDRESS) {
+        throw `address of rexOracle contract is invalid`;
       }
 
       const stakedTokenDataProvider = await deployStakedTokenDataProvider(
-        [stkPSYSAddress, ethOracleAddress, psysOracleAddress],
+        [stkREXAddress, ethOracleAddress, rexOracleAddress],
         verify
       );
 

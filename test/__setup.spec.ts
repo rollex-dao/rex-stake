@@ -5,25 +5,21 @@ import { initializeMakeSuite } from './helpers/make-suite';
 import { deployMintableErc20, deployATokenMock } from '../helpers/contracts-accessors';
 import { waitForTx } from '../helpers/misc-utils';
 import { MintableErc20 } from '../types/MintableErc20';
-import { testDeploypsysStakeV2, testDeploypsysStakeV1 } from './helpers/deploy';
+import { testDeployrexStakeV2, testDeployrexStakeV1 } from './helpers/deploy';
 
-const topUpWalletsWithPSYS = async (
-  wallets: Signer[],
-  psysToken: MintableErc20,
-  amount: string
-) => {
+const topUpWalletsWithREX = async (wallets: Signer[], rexToken: MintableErc20, amount: string) => {
   for (const wallet of wallets) {
-    await waitForTx(await psysToken.connect(wallet).mint(amount));
+    await waitForTx(await rexToken.connect(wallet).mint(amount));
   }
 };
 
 const buildTestEnv = async (deployer: Signer, vaultOfRewards: Signer, restWallets: Signer[]) => {
   console.time('setup');
 
-  const psysToken = await deployMintableErc20(['PSYS', 'psys', 18]);
+  const rexToken = await deployMintableErc20(['REX', 'rex', 18]);
 
-  await waitForTx(await psysToken.connect(vaultOfRewards).mint(ethers.utils.parseEther('1000000')));
-  await topUpWalletsWithPSYS(
+  await waitForTx(await rexToken.connect(vaultOfRewards).mint(ethers.utils.parseEther('1000000')));
+  await topUpWalletsWithREX(
     [
       restWallets[0],
       restWallets[1],
@@ -32,21 +28,21 @@ const buildTestEnv = async (deployer: Signer, vaultOfRewards: Signer, restWallet
       restWallets[4],
       restWallets[5],
     ],
-    psysToken,
+    rexToken,
     ethers.utils.parseEther('100').toString()
   );
 
-  await testDeploypsysStakeV2(psysToken, deployer, vaultOfRewards, restWallets);
+  await testDeployrexStakeV2(rexToken, deployer, vaultOfRewards, restWallets);
 
-  const { pegasysIncentivesControllerProxy } = await testDeploypsysStakeV1(
-    psysToken,
+  const { rollexIncentivesControllerProxy } = await testDeployrexStakeV1(
+    rexToken,
     deployer,
     vaultOfRewards,
     restWallets
   );
 
-  await deployATokenMock(pegasysIncentivesControllerProxy.address, 'aDai');
-  await deployATokenMock(pegasysIncentivesControllerProxy.address, 'aWeth');
+  await deployATokenMock(rollexIncentivesControllerProxy.address, 'aDai');
+  await deployATokenMock(rollexIncentivesControllerProxy.address, 'aWeth');
 
   console.timeEnd('setup');
 };

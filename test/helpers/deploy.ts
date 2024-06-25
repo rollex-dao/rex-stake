@@ -3,26 +3,26 @@ import {
   PSM_STAKER_PREMIUM,
   COOLDOWN_SECONDS,
   UNSTAKE_WINDOW,
-  STAKED_PSYS_NAME,
-  STAKED_PSYS_SYMBOL,
-  STAKED_PSYS_DECIMALS,
+  STAKED_REX_NAME,
+  STAKED_REX_SYMBOL,
+  STAKED_REX_DECIMALS,
   MAX_UINT_AMOUNT,
   ZERO_ADDRESS,
 } from '../../helpers/constants';
 import {
   deployInitializableAdminUpgradeabilityProxy,
-  deployPegasysIncentivesController,
-  deployStakedPSYS,
+  deployRollexIncentivesController,
+  deployStakedREX,
   deployMockTransferHook,
-  deployStakedPSYSV3,
+  deployStakedREXV3,
 } from '../../helpers/contracts-accessors';
 import { insertContractAddressInDb } from '../../helpers/contracts-helpers';
 import { waitForTx } from '../../helpers/misc-utils';
 import { eContractid } from '../../helpers/types';
 import { MintableErc20 } from '../../types/MintableErc20';
 
-export const testDeploypsysStakeV1 = async (
-  psysToken: MintableErc20,
+export const testDeployrexStakeV1 = async (
+  rexToken: MintableErc20,
   deployer: Signer,
   vaultOfRewards: Signer,
   restWallets: Signer[]
@@ -30,24 +30,24 @@ export const testDeploypsysStakeV1 = async (
   const proxyAdmin = await restWallets[0].getAddress();
   const emissionManager = await deployer.getAddress();
 
-  const stakedToken = psysToken.address;
-  const rewardsToken = psysToken.address;
+  const stakedToken = rexToken.address;
+  const rewardsToken = rexToken.address;
 
   const vaultOfRewardsAddress = await vaultOfRewards.getAddress();
 
-  const pegasysIncentivesControllerProxy = await deployInitializableAdminUpgradeabilityProxy();
-  const StakedPSYSProxy = await deployInitializableAdminUpgradeabilityProxy();
+  const rollexIncentivesControllerProxy = await deployInitializableAdminUpgradeabilityProxy();
+  const StakedREXProxy = await deployInitializableAdminUpgradeabilityProxy();
 
-  const pegasysIncentivesControllerImplementation = await deployPegasysIncentivesController([
-    psysToken.address,
+  const rollexIncentivesControllerImplementation = await deployRollexIncentivesController([
+    rexToken.address,
     vaultOfRewardsAddress,
-    StakedPSYSProxy.address,
+    StakedREXProxy.address,
     PSM_STAKER_PREMIUM,
     emissionManager,
     (1000 * 60 * 60).toString(),
   ]);
 
-  const StakedPSYSImpl = await deployStakedPSYS([
+  const StakedREXImpl = await deployStakedREX([
     stakedToken,
     rewardsToken,
     COOLDOWN_SECONDS,
@@ -59,64 +59,64 @@ export const testDeploypsysStakeV1 = async (
 
   const mockTransferHook = await deployMockTransferHook();
 
-  const StakedPSYSEncodedInitialize = StakedPSYSImpl.interface.encodeFunctionData('initialize', [
+  const StakedREXEncodedInitialize = StakedREXImpl.interface.encodeFunctionData('initialize', [
     mockTransferHook.address,
-    STAKED_PSYS_NAME,
-    STAKED_PSYS_SYMBOL,
-    STAKED_PSYS_DECIMALS,
+    STAKED_REX_NAME,
+    STAKED_REX_SYMBOL,
+    STAKED_REX_DECIMALS,
   ]);
-  await StakedPSYSProxy['initialize(address,address,bytes)'](
-    StakedPSYSImpl.address,
+  await StakedREXProxy['initialize(address,address,bytes)'](
+    StakedREXImpl.address,
     proxyAdmin,
-    StakedPSYSEncodedInitialize
+    StakedREXEncodedInitialize
   );
   await waitForTx(
-    await psysToken.connect(vaultOfRewards).approve(StakedPSYSProxy.address, MAX_UINT_AMOUNT)
+    await rexToken.connect(vaultOfRewards).approve(StakedREXProxy.address, MAX_UINT_AMOUNT)
   );
-  await insertContractAddressInDb(eContractid.StakedPSYS, StakedPSYSProxy.address);
+  await insertContractAddressInDb(eContractid.StakedREX, StakedREXProxy.address);
 
   const peiEncodedInitialize =
-    pegasysIncentivesControllerImplementation.interface.encodeFunctionData('initialize');
-  await pegasysIncentivesControllerProxy['initialize(address,address,bytes)'](
-    pegasysIncentivesControllerImplementation.address,
+    rollexIncentivesControllerImplementation.interface.encodeFunctionData('initialize');
+  await rollexIncentivesControllerProxy['initialize(address,address,bytes)'](
+    rollexIncentivesControllerImplementation.address,
     proxyAdmin,
     peiEncodedInitialize
   );
   await waitForTx(
-    await psysToken
+    await rexToken
       .connect(vaultOfRewards)
-      .approve(pegasysIncentivesControllerProxy.address, MAX_UINT_AMOUNT)
+      .approve(rollexIncentivesControllerProxy.address, MAX_UINT_AMOUNT)
   );
   await insertContractAddressInDb(
-    eContractid.PegasysIncentivesController,
-    pegasysIncentivesControllerProxy.address
+    eContractid.RollexIncentivesController,
+    rollexIncentivesControllerProxy.address
   );
 
   return {
-    pegasysIncentivesControllerProxy,
-    StakedPSYSProxy,
+    rollexIncentivesControllerProxy,
+    StakedREXProxy,
   };
 };
 
-export const testDeploypsysStakeV2 = async (
-  psysToken: MintableErc20,
+export const testDeployrexStakeV2 = async (
+  rexToken: MintableErc20,
   deployer: Signer,
   vaultOfRewards: Signer,
   restWallets: Signer[]
 ) => {
-  const stakedToken = psysToken.address;
-  const rewardsToken = psysToken.address;
+  const stakedToken = rexToken.address;
+  const rewardsToken = rexToken.address;
   const emissionManager = await deployer.getAddress();
   const vaultOfRewardsAddress = await vaultOfRewards.getAddress();
 
-  const { StakedPSYSProxy } = await testDeploypsysStakeV1(
-    psysToken,
+  const { StakedREXProxy } = await testDeployrexStakeV1(
+    rexToken,
     deployer,
     vaultOfRewards,
     restWallets
   );
 
-  const StakedPSYSImpl = await deployStakedPSYSV3([
+  const StakedREXImpl = await deployStakedREXV3([
     stakedToken,
     rewardsToken,
     COOLDOWN_SECONDS,
@@ -127,16 +127,16 @@ export const testDeploypsysStakeV2 = async (
     ZERO_ADDRESS,
   ]);
 
-  const StakedPSYSEncodedInitialize = StakedPSYSImpl.interface.encodeFunctionData('initialize');
+  const StakedREXEncodedInitialize = StakedREXImpl.interface.encodeFunctionData('initialize');
 
-  await StakedPSYSProxy.connect(restWallets[0]).upgradeToAndCall(
-    StakedPSYSImpl.address,
-    StakedPSYSEncodedInitialize
+  await StakedREXProxy.connect(restWallets[0]).upgradeToAndCall(
+    StakedREXImpl.address,
+    StakedREXEncodedInitialize
   );
 
-  await insertContractAddressInDb(eContractid.StakedPSYSV3, StakedPSYSProxy.address);
+  await insertContractAddressInDb(eContractid.StakedREXV3, StakedREXProxy.address);
 
   return {
-    StakedPSYSProxy,
+    StakedREXProxy,
   };
 };

@@ -69,7 +69,7 @@ const getRewardsBalanceScenarios: ScenarioAction[] = [
   },
 ];
 
-makeSuite('PegasysIncentivesController claimRewards tests', (testEnv) => {
+makeSuite('RollexIncentivesController claimRewards tests', (testEnv) => {
   for (const {
     caseName,
     amountToClaim: _amountToClaim,
@@ -80,10 +80,10 @@ makeSuite('PegasysIncentivesController claimRewards tests', (testEnv) => {
     let amountToClaim = _amountToClaim;
     it(caseName, async () => {
       await increaseTimeAndMine(100);
-      const { pegasysIncentivesController, StakedPSYS, psysToken, aDaiMock } = testEnv;
+      const { rollexIncentivesController, StakedREX, rexToken, aDaiMock } = testEnv;
 
-      const distributionEndTimestamp = await pegasysIncentivesController.DISTRIBUTION_END();
-      const userAddress = await pegasysIncentivesController.signer.getAddress();
+      const distributionEndTimestamp = await rollexIncentivesController.DISTRIBUTION_END();
+      const userAddress = await rollexIncentivesController.signer.getAddress();
 
       const underlyingAsset = aDaiMock.address;
       const stakedByUser = 22 * caseName.length;
@@ -91,31 +91,31 @@ makeSuite('PegasysIncentivesController claimRewards tests', (testEnv) => {
 
       // update emissionPerSecond in advance to not affect user calculations
       if (emissionPerSecond) {
-        await pegasysIncentivesController.configureAssets([
+        await rollexIncentivesController.configureAssets([
           { emissionPerSecond, underlyingAsset, totalStaked },
         ]);
       }
 
       const destinationAddress = to || userAddress;
 
-      const destinationAddressBalanceBefore = await (toStake ? StakedPSYS : psysToken).balanceOf(
+      const destinationAddressBalanceBefore = await (toStake ? StakedREX : rexToken).balanceOf(
         destinationAddress
       );
       await aDaiMock.setUserBalanceAndSupply(stakedByUser, totalStaked);
-      const unclaimedRewardsBefore = await pegasysIncentivesController.getUserUnclaimedRewards(
+      const unclaimedRewardsBefore = await rollexIncentivesController.getUserUnclaimedRewards(
         userAddress
       );
       const userIndexBefore = await getUserIndex(
-        pegasysIncentivesController,
+        rollexIncentivesController,
         userAddress,
         underlyingAsset
       );
       const assetDataBefore = (
-        await getAssetsData(pegasysIncentivesController, [{ underlyingAsset }])
+        await getAssetsData(rollexIncentivesController, [{ underlyingAsset }])
       )[0];
 
       const claimRewardsReceipt = await waitForTx(
-        await pegasysIncentivesController.claimRewards(
+        await rollexIncentivesController.claimRewards(
           [underlyingAsset],
           amountToClaim,
           destinationAddress,
@@ -126,19 +126,19 @@ makeSuite('PegasysIncentivesController claimRewards tests', (testEnv) => {
       const actionBlockTimestamp = await getBlockTimestamp(claimRewardsReceipt.blockNumber);
 
       const userIndexAfter = await getUserIndex(
-        pegasysIncentivesController,
+        rollexIncentivesController,
         userAddress,
         underlyingAsset
       );
       const assetDataAfter = (
-        await getAssetsData(pegasysIncentivesController, [{ underlyingAsset }])
+        await getAssetsData(rollexIncentivesController, [{ underlyingAsset }])
       )[0];
 
-      const unclaimedRewardsAfter = await pegasysIncentivesController.getUserUnclaimedRewards(
+      const unclaimedRewardsAfter = await rollexIncentivesController.getUserUnclaimedRewards(
         userAddress
       );
 
-      const destinationAddressBalanceAfter = await (toStake ? StakedPSYS : psysToken).balanceOf(
+      const destinationAddressBalanceAfter = await (toStake ? StakedREX : rexToken).balanceOf(
         destinationAddress
       );
 

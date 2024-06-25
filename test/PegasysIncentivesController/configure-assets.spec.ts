@@ -117,12 +117,12 @@ const configureAssetScenarios: ScenarioAction[] = [
   },
 ];
 
-makeSuite('PegasysIncentivesController configureAssets', (testEnv: TestEnv) => {
+makeSuite('RollexIncentivesController configureAssets', (testEnv: TestEnv) => {
   // custom checks
   it('Tries to submit config updates not from emission manager', async () => {
-    const { pegasysIncentivesController, users } = testEnv;
+    const { rollexIncentivesController, users } = testEnv;
     await expect(
-      pegasysIncentivesController.connect(users[2].signer).configureAssets([])
+      rollexIncentivesController.connect(users[2].signer).configureAssets([])
     ).to.be.revertedWith('ONLY_EMISSION_MANAGER');
   });
 
@@ -130,8 +130,8 @@ makeSuite('PegasysIncentivesController configureAssets', (testEnv: TestEnv) => {
   // TODO: add events emission
   for (const { assets, caseName, compareRules, customTimeMovement } of configureAssetScenarios) {
     it(caseName, async () => {
-      const { pegasysIncentivesController } = testEnv;
-      const distributionEndTimestamp = await pegasysIncentivesController.DISTRIBUTION_END();
+      const { rollexIncentivesController } = testEnv;
+      const distributionEndTimestamp = await rollexIncentivesController.DISTRIBUTION_END();
 
       const assetConfigsUpdate: AssetUpdateData[] = [];
 
@@ -144,7 +144,7 @@ makeSuite('PegasysIncentivesController configureAssets', (testEnv: TestEnv) => {
       });
 
       const assetsConfigBefore = await getAssetsData(
-        pegasysIncentivesController,
+        rollexIncentivesController,
         assetConfigsUpdate
       );
 
@@ -153,13 +153,10 @@ makeSuite('PegasysIncentivesController configureAssets', (testEnv: TestEnv) => {
       }
 
       const txReceipt = await waitForTx(
-        await pegasysIncentivesController.configureAssets(assetConfigsUpdate)
+        await rollexIncentivesController.configureAssets(assetConfigsUpdate)
       );
       const configsUpdateBlockTimestamp = await getBlockTimestamp(txReceipt.blockNumber);
-      const assetsConfigAfter = await getAssetsData(
-        pegasysIncentivesController,
-        assetConfigsUpdate
-      );
+      const assetsConfigAfter = await getAssetsData(rollexIncentivesController, assetConfigsUpdate);
 
       const eventsEmitted = txReceipt.events || [];
 

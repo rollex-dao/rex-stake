@@ -3,24 +3,24 @@ pragma solidity ^0.7.5;
 pragma experimental ABIEncoderV2;
 
 import {IERC20} from '../interfaces/IERC20.sol';
-import {AggregatedStakedPSYSV3} from '../interfaces/AggregatedStakedPSYSV3.sol';
+import {AggregatedStakedREXV3} from '../interfaces/AggregatedStakedREXV3.sol';
 import {IStakedToken} from '../interfaces/IStakedToken.sol';
 import {AggregatorInterface} from '../interfaces/AggregatorInterface.sol';
 import {IStakedTokenDataProvider} from '../interfaces/IStakedTokenDataProvider.sol';
 
 /**
  * @title StakedTokenDataProvider
- * @notice Data provider contract for Staked Tokens of the Safety Module (such as stkPSYS for staked PSYS in the safety module)
+ * @notice Data provider contract for Staked Tokens of the Safety Module (such as stkREX for staked REX in the safety module)
  */
 contract StakedTokenDataProvider is IStakedTokenDataProvider {
   /// @inheritdoc IStakedTokenDataProvider
   address public immutable override ETH_USD_PRICE_FEED;
 
   /// @inheritdoc IStakedTokenDataProvider
-  address public immutable override PSYS_USD_PRICE_FEED;
+  address public immutable override REX_USD_PRICE_FEED;
 
   /// @inheritdoc IStakedTokenDataProvider
-  address public immutable override STAKED_PSYS;
+  address public immutable override STAKED_REX;
 
   uint256 private constant SECONDS_PER_YEAR = 365 days;
 
@@ -28,14 +28,14 @@ contract StakedTokenDataProvider is IStakedTokenDataProvider {
 
   /**
    * @dev Constructor
-   * @param stkPsys The address of the StkPSYS token
+   * @param stkPsys The address of the StkREX token
    * @param ethUsdPriceFeed The address of ETH price feed (USD denominated, with 8 decimals)
-   * @param pegasysUsdPriceFeed The address of PSYS price feed (USD denominated, with 8 decimals)
+   * @param rollexUsdPriceFeed The address of REX price feed (USD denominated, with 8 decimals)
    */
-  constructor(address stkPsys, address ethUsdPriceFeed, address pegasysUsdPriceFeed) {
-    STAKED_PSYS = stkPsys;
+  constructor(address stkPsys, address ethUsdPriceFeed, address rollexUsdPriceFeed) {
+    STAKED_REX = stkPsys;
     ETH_USD_PRICE_FEED = ethUsdPriceFeed;
-    PSYS_USD_PRICE_FEED = pegasysUsdPriceFeed;
+    REX_USD_PRICE_FEED = rollexUsdPriceFeed;
   }
 
   /// @inheritdoc IStakedTokenDataProvider
@@ -43,13 +43,9 @@ contract StakedTokenDataProvider is IStakedTokenDataProvider {
     external
     view
     override
-    returns (
-      StakedTokenData memory stkPSYSData,
-      StakedTokenData memory stkBptData,
-      uint256 ethPrice
-    )
+    returns (StakedTokenData memory stkREXData, StakedTokenData memory stkBptData, uint256 ethPrice)
   {
-    stkPSYSData = _getStakedTokenData(STAKED_PSYS, ETH_USD_PRICE_FEED);
+    stkREXData = _getStakedTokenData(STAKED_REX, ETH_USD_PRICE_FEED);
     ethPrice = uint256(AggregatorInterface(ETH_USD_PRICE_FEED).latestAnswer());
   }
 
@@ -61,15 +57,15 @@ contract StakedTokenDataProvider is IStakedTokenDataProvider {
     view
     override
     returns (
-      StakedTokenData memory stkPSYSData,
-      StakedTokenUserData memory stkPSYSUserData,
+      StakedTokenData memory stkREXData,
+      StakedTokenUserData memory stkREXUserData,
       StakedTokenData memory stkBptData,
       StakedTokenUserData memory stkBptUserData,
       uint256 ethPrice
     )
   {
-    stkPSYSData = _getStakedTokenData(STAKED_PSYS, ETH_USD_PRICE_FEED);
-    stkPSYSUserData = _getStakedTokenUserData(STAKED_PSYS, user);
+    stkREXData = _getStakedTokenData(STAKED_REX, ETH_USD_PRICE_FEED);
+    stkREXUserData = _getStakedTokenUserData(STAKED_REX, user);
     ethPrice = uint256(AggregatorInterface(ETH_USD_PRICE_FEED).latestAnswer());
   }
 
@@ -128,21 +124,21 @@ contract StakedTokenDataProvider is IStakedTokenDataProvider {
     address stakedToken,
     address oracle
   ) internal view returns (StakedTokenData memory data) {
-    AggregatedStakedPSYSV3 stkToken = AggregatedStakedPSYSV3(stakedToken);
+    AggregatedStakedREXV3 stkToken = AggregatedStakedREXV3(stakedToken);
     data.stakedTokenTotalSupply = stkToken.totalSupply();
     data.stakedTokenTotalRedeemableAmount = stkToken.previewRedeem(data.stakedTokenTotalSupply);
     data.stakeCooldownSeconds = stkToken.getCooldownSeconds();
     data.stakeUnstakeWindow = stkToken.UNSTAKE_WINDOW();
-    data.rewardTokenPriceEth = uint256(AggregatorInterface(PSYS_USD_PRICE_FEED).latestAnswer());
+    data.rewardTokenPriceEth = uint256(AggregatorInterface(REX_USD_PRICE_FEED).latestAnswer());
     data.distributionEnd = stkToken.DISTRIBUTION_END();
     data.distributionPerSecond = block.timestamp < data.distributionEnd
       ? stkToken.assets(address(stakedToken)).emissionPerSecond
       : 0;
 
     // stkPsys
-    if (address(stakedToken) == STAKED_PSYS) {
+    if (address(stakedToken) == STAKED_REX) {
       data.stakedTokenPriceEth = data.rewardTokenPriceEth;
-      // assumes PSYS and stkPSYS have the same value
+      // assumes REX and stkREX have the same value
       data.stakeApy = _calculateApy(data.distributionPerSecond, data.stakedTokenTotalSupply);
     } else {
       // other wrapped assets
@@ -164,7 +160,7 @@ contract StakedTokenDataProvider is IStakedTokenDataProvider {
     address stakedToken,
     address user
   ) internal view returns (StakedTokenUserData memory data) {
-    AggregatedStakedPSYSV3 stkToken = AggregatedStakedPSYSV3(stakedToken);
+    AggregatedStakedREXV3 stkToken = AggregatedStakedREXV3(stakedToken);
     data.stakedTokenUserBalance = stkToken.balanceOf(user);
     data.rewardsToClaim = stkToken.getTotalRewardsBalance(user);
     data.underlyingTokenUserBalance = IERC20(stkToken.STAKED_TOKEN()).balanceOf(user);
@@ -187,15 +183,15 @@ contract StakedTokenDataProvider is IStakedTokenDataProvider {
     return (distributionPerSecond * SECONDS_PER_YEAR * APY_PRECISION) / stakedTokenTotalSupply;
   }
 
-  function getstkPSYSUserData(
+  function getstkREXUserData(
     address user
   )
     external
     view
     override
-    returns (StakedTokenData memory stkPSYSData, StakedTokenUserData memory stkPSYSUserData)
+    returns (StakedTokenData memory stkREXData, StakedTokenUserData memory stkREXUserData)
   {
-    stkPSYSData = _getStakedTokenData(STAKED_PSYS, ETH_USD_PRICE_FEED);
-    stkPSYSUserData = _getStakedTokenUserData(STAKED_PSYS, user);
+    stkREXData = _getStakedTokenData(STAKED_REX, ETH_USD_PRICE_FEED);
+    stkREXUserData = _getStakedTokenUserData(STAKED_REX, user);
   }
 }

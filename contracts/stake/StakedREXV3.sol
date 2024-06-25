@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 import {ERC20} from '@aave/aave-token/contracts/open-zeppelin/ERC20.sol';
 
 import {IERC20} from '../interfaces/IERC20.sol';
-import {IStakedPSYS} from '../interfaces/IStakedPSYS.sol';
+import {IStakedREX} from '../interfaces/IStakedREX.sol';
 import {ITransferHook} from '../interfaces/ITransferHook.sol';
 
 import {DistributionTypes} from '../lib/DistributionTypes.sol';
@@ -13,19 +13,19 @@ import {SafeMath} from '../lib/SafeMath.sol';
 import {SafeERC20} from '../lib/SafeERC20.sol';
 
 import {VersionedInitializable} from '../utils/VersionedInitializable.sol';
-import {PegasysDistributionManager} from './PegasysDistributionManager.sol';
+import {RollexDistributionManager} from './RollexDistributionManager.sol';
 import {GovernancePowerWithSnapshot} from '../lib/GovernancePowerWithSnapshot.sol';
 
 /**
- * @title StakedPSYSV3
- * @notice Contract to stake PSYS token, tokenize the position and get rewards, inheriting from a distribution manager contract
- * @author Pegasys team
+ * @title StakedREXV3
+ * @notice Contract to stake REX token, tokenize the position and get rewards, inheriting from a distribution manager contract
+ * @author Rollex team
  **/
-contract StakedPSYSV3 is
-  IStakedPSYS,
+contract StakedREXV3 is
+  IStakedREX,
   GovernancePowerWithSnapshot,
   VersionedInitializable,
-  PegasysDistributionManager
+  RollexDistributionManager
 {
   using SafeMath for uint256;
   using SafeERC20 for IERC20;
@@ -33,8 +33,8 @@ contract StakedPSYSV3 is
   /// @dev Start of Storage layout from StakedToken v1
   uint256 public constant REVISION = 2;
 
-  string internal constant NAME = 'Staked PSYS';
-  string internal constant SYMBOL = 'stkPSYS';
+  string internal constant NAME = 'Staked REX';
+  string internal constant SYMBOL = 'stkREX';
   uint8 internal constant DECIMALS = 18;
 
   IERC20 public immutable STAKED_TOKEN;
@@ -86,13 +86,13 @@ contract StakedPSYSV3 is
     address emissionManager,
     uint128 distributionDuration,
     address governance
-  ) public ERC20(NAME, SYMBOL) PegasysDistributionManager(emissionManager, distributionDuration) {
+  ) public ERC20(NAME, SYMBOL) RollexDistributionManager(emissionManager, distributionDuration) {
     STAKED_TOKEN = stakedToken;
     REWARD_TOKEN = rewardToken;
     COOLDOWN_SECONDS = cooldownSeconds;
     UNSTAKE_WINDOW = unstakeWindow;
     REWARDS_VAULT = rewardsVault;
-    _pegasysGovernance = ITransferHook(governance);
+    _rollexGovernance = ITransferHook(governance);
     ERC20._setupDecimals(DECIMALS);
   }
 
@@ -433,10 +433,10 @@ contract StakedPSYSV3 is
       DelegationType.PROPOSITION_POWER
     );
 
-    // caching the pegasys governance address to avoid multiple state loads
-    ITransferHook pegasysGovernance = _pegasysGovernance;
-    if (pegasysGovernance != ITransferHook(0)) {
-      pegasysGovernance.onTransfer(from, to, amount);
+    // caching the rollex governance address to avoid multiple state loads
+    ITransferHook rollexGovernance = _rollexGovernance;
+    if (rollexGovernance != ITransferHook(0)) {
+      rollexGovernance.onTransfer(from, to, amount);
     }
   }
 
